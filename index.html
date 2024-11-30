@@ -77,6 +77,20 @@
             border-radius: 5px;
             margin: 5px 0;
         }
+        .back-button {
+            font-size: 14px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            padding: 10px 20px;
+            width: auto;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -86,22 +100,24 @@
         <div class="left">
             <h1>남서진 AI</h1>
             <button id="startChatButton">남서진 AI와 대화하기</button>
+            <button id="askQuestionButton">남서진 AI에게 질문하기</button>
         </div>
-        <!-- 오른쪽: 질문하기 버튼 -->
+        <!-- 오른쪽: 대화창/질문창 -->
         <div class="right">
             <h1>남서진 AI</h1>
-            <button id="askQuestionButton">남서진 AI에게 질문하기</button>
         </div>
     </div>
 
     <!-- 대화창 -->
     <div class="chatbox" id="chatbox">
+        <button class="back-button" id="backToMenuFromChat">메뉴로 돌아가기</button>
         <div class="messages" id="messages"></div>
         <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
     </div>
 
     <!-- 질문창 -->
     <div class="questionbox" id="questionbox">
+        <button class="back-button" id="backToMenuFromQuestion">메뉴로 돌아가기</button>
         <div class="answers" id="answers"></div>
         <input type="text" id="questionInput" placeholder="질문을 입력하세요..." />
     </div>
@@ -126,14 +142,6 @@
             "여행": "여행은 새로운 문화와 경험을 접할 수 있는 멋진 기회예요.",
             "꿈": "꿈은 우리가 이루고자 하는 목표와 비전을 담은 중요한 부분이에요.",
             "기술": "기술은 사람들의 삶을 더 편리하고 효율적으로 만들어주는 중요한 요소예요.",
-            "책": "책은 다양한 지식과 경험을 제공해주며, 사람의 사고를 확장시키는 도구예요.",
-            "미래": "미래는 우리가 지금 어떻게 행동하는지에 따라 달라질 거예요.",
-            "기분": "기분이 좋지 않으시면, 잠시 쉬고 좋아하는 일을 해보세요.",
-            "동물": "저는 동물들도 좋아해요! 특히 강아지와 고양이를 좋아해요.",
-            "취미": "저는 다양한 취미를 가지고 있어요. 영화 보기, 음악 듣기, 책 읽기 등이죠.",
-            "스포츠": "축구와 농구 같은 스포츠는 팀워크가 중요한 게임이어서 정말 좋아요.",
-            "날씨": "오늘 날씨는 맑고 기온은 적당하네요. 좋은 하루 보내세요!",
-            "기술": "기술은 우리 삶에 많은 영향을 주고 있어요. AI, 빅 데이터, 로봇 기술 등 다양한 분야에서 활발히 발전하고 있죠.",
             "학교": "학교는 배움의 장소예요. 다양한 지식을 쌓을 수 있는 소중한 시간입니다.",
             "너는 누구야": "저는 남서진의 AI로, 다양한 질문에 답하거나 대화를 나눌 수 있어요!"
         };
@@ -187,12 +195,32 @@
         document.getElementById("startChatButton").addEventListener("click", function() {
             document.getElementById("chatbox").style.display = "block";
             document.getElementById("questionbox").style.display = "none";
+            document.getElementById("backToMenuFromChat").style.display = "block";
+            document.getElementById("backToMenuFromQuestion").style.display = "none";
         });
 
         // 질문하기 버튼 클릭
         document.getElementById("askQuestionButton").addEventListener("click", function() {
             document.getElementById("questionbox").style.display = "block";
             document.getElementById("chatbox").style.display = "none";
+            document.getElementById("backToMenuFromChat").style.display = "none";
+            document.getElementById("backToMenuFromQuestion").style.display = "block";
+        });
+
+        // 메뉴로 돌아가기 (대화창에서)
+        document.getElementById("backToMenuFromChat").addEventListener("click", function() {
+            document.getElementById("chatbox").style.display = "none";
+            document.getElementById("questionbox").style.display = "none";
+            document.getElementById("backToMenuFromChat").style.display = "none";
+            document.getElementById("backToMenuFromQuestion").style.display = "none";
+        });
+
+        // 메뉴로 돌아가기 (질문창에서)
+        document.getElementById("backToMenuFromQuestion").addEventListener("click", function() {
+            document.getElementById("questionbox").style.display = "none";
+            document.getElementById("chatbox").style.display = "none";
+            document.getElementById("backToMenuFromChat").style.display = "none";
+            document.getElementById("backToMenuFromQuestion").style.display = "none";
         });
     </script>
 
