@@ -19,11 +19,14 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+            text-align: center;
         }
 
         header {
             text-align: center;
             margin-bottom: 30px;
+            width: 100%;
+            padding: 10px;
         }
 
         h1 {
@@ -133,7 +136,7 @@
 <body>
     <header>
         <h1>남서진의 대화형 AI</h1>
-        <p>인공지능과 대화하며 다양한 질문에 답을 찾아보세요!</p>
+        <p>다양한 질문에 대해 대답하는 AI와 대화해보세요!</p>
     </header>
 
     <div class="chat-container">
@@ -208,59 +211,60 @@
 
         function getAIResponse(input) {
             let response = "";
-            // 선택된 카테고리 값 가져오기
             let category = document.getElementById("category").value;
 
+            // 다양한 카테고리별 AI 응답
             if (category === "greeting") {
                 response = "안녕하세요! 무엇을 도와드릴까요?";
             }
-            // '기분'에 대한 질문
             else if (category === "mood") {
-                const moods = [
-                    "저는 기분이 아주 좋아요! 😊",
-                    "기분이 최고예요!",
-                    "항상 기분이 좋아요!",
-                    "오늘도 행복한 하루입니다!"
-                ];
-                response = moods[Math.floor(Math.random() * moods.length)];
+                response = "저는 기분이 좋습니다! 😊 여러분은 어떠신가요?";
             }
-            // '시간'에 대한 질문
             else if (category === "time") {
                 response = `현재 시간은 ${new Date().toLocaleTimeString()}입니다.`;
             }
-            // '내일 계획'에 대한 질문
             else if (category === "plans") {
-                response = "내일 어떤 계획을 세우셨나요? 함께 고민해볼까요?";
+                response = "내일의 계획을 함께 생각해볼까요?";
             }
-            // '게임'에 대한 질문
             else if (category === "games") {
-                response = "게임을 좋아하시나요? 어떤 게임을 즐기세요?";
+                response = "게임 좋아하시나요? 어떤 게임을 좋아하나요?";
             }
-            // '영화'에 대한 질문
             else if (category === "movies") {
-                response = "최근에 본 영화는 무엇인가요? 추천해 드릴 영화가 있어요!";
+                response = "영화는 좋아하시나요? 최근에 본 영화가 있나요?";
             }
-            // '음악'에 대한 질문
             else if (category === "music") {
                 response = "어떤 음악 장르를 좋아하시나요? 클래식, 힙합, 재즈 등 여러 장르가 있어요!";
             }
-            // '취미'에 대한 질문
             else if (category === "hobbies") {
-                response = "취미가 무엇인가요? 함께 취미에 대해 이야기해봐요!";
+                response = "취미가 무엇인가요? 함께 이야기해봐요!";
             }
-            // '먹을 것'에 대한 질문
             else if (category === "food") {
-                response = "오늘은 무엇을 먹고 싶으신가요? 추천해드릴게요!";
+                response = "음식을 좋아하시나요? 좋아하는 음식은 무엇인가요?";
             }
-            // '기술'에 대한 질문
             else if (category === "technology") {
-                response = "최신 기술에 대해 알고 싶으신가요? 어떤 기술이 궁금하세요?";
+                response = "기술에 대해 궁금한 점이 있나요? 최신 기술 트렌드에 대해 알려드릴게요!";
             }
-            // '책'에 대한 질문
             else if (category === "books") {
-                response = "최근 읽은 책이 있나요? 아니면 추천해 드릴 책이 있어요!";
+                response = "최근 읽은 책이 있나요? 아니면 추천해드릴 책이 있어요!";
             }
-            // 그 외의 카테고리
+            else if (category === "sports") {
+                response = "스포츠는 좋아하시나요? 어떤 종목을 즐기시나요?";
+            }
+            else if (category === "travel") {
+                response = "여행을 좋아하시나요? 가장 가보고 싶은 장소는 어디인가요?";
+            }
+            else if (category === "science") {
+                response = "과학에 대한 이야기를 나누고 싶으신가요? 궁금한 분야가 있으면 말씀해 주세요!";
+            }
+            else if (category === "philosophy") {
+                response = "철학에 대해 이야기하고 싶으신가요? 어떤 철학적 질문이 궁금한가요?";
+            }
+            else if (category === "politics") {
+                response = "정치에 대한 의견을 나누고 싶으신가요?";
+            }
+            else if (category === "history") {
+                response = "역사에 대해 이야기해볼까요? 가장 관심 있는 시대나 사건은 무엇인가요?";
+            }
             else {
                 response = "저는 아직 그 질문에 대한 답을 준비 중입니다.";
             }
