@@ -95,6 +95,39 @@
             padding: 8px;
             border-radius: 5px;
         }
+
+        #faq {
+            margin-bottom: 20px;
+        }
+
+        #faq h3 {
+            margin-bottom: 10px;
+        }
+
+        #faq ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #faq li {
+            cursor: pointer;
+            margin-bottom: 5px;
+            color: #007bff;
+        }
+
+        #faq li:hover {
+            text-decoration: underline;
+        }
+
+        .category-select {
+            margin-bottom: 20px;
+        }
+
+        .category-select select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
@@ -104,7 +137,28 @@
     </header>
 
     <div class="chat-container">
-        <div id="chat-box" class="chat-box"></div>
+        <div id="faq">
+            <h3>자주 묻는 질문</h3>
+            <ul>
+                <li onclick="askQuestion('안녕하세요')">안녕하세요</li>
+                <li onclick="askQuestion('오늘 날씨')">오늘 날씨</li>
+                <li onclick="askQuestion('기분')">기분</li>
+                <li onclick="askQuestion('시간')">현재 시간</li>
+            </ul>
+        </div>
+
+        <div class="category-select">
+            <label for="category">질문 카테고리:</label>
+            <select id="category">
+                <option value="greeting">인사</option>
+                <option value="weather">날씨</option>
+                <option value="time">시간</option>
+                <option value="mood">기분</option>
+            </select>
+        </div>
+
+        <div class="chat-box" id="chat-box"></div>
+
         <input type="text" id="user-input" class="user-input" placeholder="질문을 입력하세요...">
         <button id="send-btn" class="send-btn">전송</button>
     </div>
@@ -140,12 +194,23 @@
                 response = "안녕하세요, 저는 남서진의 대화형 AI입니다!";
             } else if (input.includes("오늘 날씨")) {
                 response = "날씨 정보를 제공하려면 외부 API를 연결해야 합니다.";
+            } else if (input.includes("기분")) {
+                response = "저는 항상 기분이 좋습니다! 😊";
+            } else if (input.includes("시간")) {
+                response = `현재 시간은 ${new Date().toLocaleTimeString()}입니다.`;
             } else {
-                response = "저는 아직 그 질문에 대한 답을 준비 중입니다. 더 물어보세요!";
+                response = "저는 아직 그 질문에 대한 답을 준비 중입니다.";
             }
             
             displayMessage(response, 'ai');
         }
+
+        // 자주 묻는 질문을 클릭하면 해당 질문으로 답변을 받음
+        function askQuestion(question) {
+            displayMessage(question, 'user');
+            getAIResponse(question);
+        }
     </script>
 </body>
 </html>
+
