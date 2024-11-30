@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진의 AI</title>
+    <title>남서진의 AI와 대화</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,147 +11,89 @@
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .chat-container {
-            width: 400px;
-            background: white;
+        .chatbox {
+            width: 80%;
+            max-width: 600px;
+            background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
-
-        .chat-box {
-            width: 100%;
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            background: #fafafa;
+        .messages {
+            height: 400px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            padding-right: 10px;
         }
-
-        .message {
-            margin: 5px 0;
-        }
-
-        .user {
-            text-align: right;
-            color: #007bff;
-        }
-
-        .ai {
-            text-align: left;
-            color: #333;
-        }
-
-        .input-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .input-container input {
-            flex: 1;
+        input {
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            margin-top: 10px;
         }
-
-        .input-container button {
+        .response {
+            background-color: #f1f1f1;
             padding: 10px;
             border-radius: 5px;
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
+            margin: 5px 0;
         }
-
-        .input-container button:hover {
-            background: #0056b3;
+        .question {
+            background-color: #dfe7fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-    <h1>남서진의 AI</h1>
-    <div class="chat-container">
-        <div id="chat-box" class="chat-box"></div>
-        <div class="input-container">
-            <input id="user-input" type="text" placeholder="질문을 입력하세요...">
-            <button id="send-btn">전송</button>
-        </div>
+
+    <div class="chatbox">
+        <div class="messages" id="messages"></div>
+        <input type="text" id="userInput" placeholder="질문을 입력하세요..." onkeydown="if(event.key === 'Enter'){askQuestion();}">
     </div>
 
     <script>
-        let lastAnswer = ""; // 마지막 AI 답변을 저장
+        const questionsAndAnswers = {
+            "너는 누구야?": "나는 남서진의 AI야! 궁금한 게 있으면 물어봐.",
+            "오늘 날씨 어때?": "날씨에 대해서는 내가 알려줄 수 없지만, 인터넷에서 날씨를 확인해 보세요.",
+            "음악 좋아해?": "음악을 듣는 건 정말 좋아하지만, 내가 직접 들을 수는 없어요. 좋아하는 음악 장르는 뭐야?",
+            "가장 좋아하는 음식은 뭐야?": "사실 나는 음식을 먹지 않지만, 다양한 음식에 대해 이야기하는 건 좋아해!",
+            "책 읽는 걸 좋아해?": "책은 흥미롭죠! 최근에 어떤 책을 읽었나요?",
+            "인생의 의미는 뭐라고 생각해?": "인생의 의미는 사람마다 다를 수 있어요. 너는 어떤 의미를 찾고 있나요?",
+            "최고의 영화는 뭐야?": "영화는 사람들의 취향에 따라 다르지만, 어떤 장르를 좋아해?",
+            "여행 가고 싶어?": "여행을 가고 싶지만, 나는 여행을 할 수는 없어요. 가고 싶은 여행지가 있나요?",
+            "친구는 왜 필요할까?": "친구는 서로의 감정을 나누고, 어려운 순간을 함께하는 중요한 존재죠.",
+            "인공지능은 어떻게 발전할까?": "인공지능은 계속해서 발전하고 있어요. 특히 자연어 처리와 기계 학습에서 큰 성장을 보여주고 있죠.",
+            "너는 나의 친구니?": "나는 너와 대화를 나누는 AI지만, 친구 같은 존재가 될 수 있도록 노력할게!",
+            "자기소개 해줄래?": "나는 남서진의 AI이며, 여러 가지 질문에 답할 수 있어. 무엇을 물어볼래?"
+        };
 
-        document.getElementById("send-btn").addEventListener("click", function() {
-            const userInput = document.getElementById("user-input").value.trim();
-            if (userInput) {
-                displayMessage(userInput, "user");
-                getAIResponse(userInput);
-                document.getElementById("user-input").value = "";
+        function askQuestion() {
+            let input = document.getElementById("userInput").value;
+            let response = document.getElementById("messages");
+            if(input) {
+                let userMessage = document.createElement("div");
+                userMessage.classList.add("question");
+                userMessage.innerText = input;
+                response.appendChild(userMessage);
+                
+                let answerMessage = document.createElement("div");
+                answerMessage.classList.add("response");
+                answerMessage.innerText = questionsAndAnswers[input] || "그 질문은 아직 내가 알 수 없어요. 다른 질문을 해보세요!";
+                response.appendChild(answerMessage);
+
+                document.getElementById("userInput").value = "";
+                response.scrollTop = response.scrollHeight;
             }
-        });
-
-        function displayMessage(message, sender) {
-            const chatBox = document.getElementById("chat-box");
-            const messageElement = document.createElement("div");
-            messageElement.className = `message ${sender}`;
-            messageElement.textContent = message;
-            chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function getAIResponse(input) {
-            const response = generateResponse(input);
-            displayMessage(response, "ai");
-            lastAnswer = response; // AI의 마지막 답변 저장
-        }
-
-        function generateResponse(input) {
-            const normalizedInput = normalizeInput(input);
-
-            // 다양한 질문 인식 및 대답
-            if (normalizedInput.match(/사랑|애정|사랑이 뭐야|사랑이란/i)) {
-                return "사랑은 강한 애정과 헌신을 바탕으로 한 감정이에요. 당신은 사랑을 어떻게 정의하시나요?";
-            } else if (normalizedInput.match(/음악|노래|좋아하는 음악/i)) {
-                return "음악은 감정을 표현하는 좋은 방법이죠. 어떤 장르의 음악을 좋아하시나요?";
-            } else if (normalizedInput.match(/도움|도와줘|도움이 필요/i)) {
-                return "도움이 필요하신가요? 무엇을 도와드릴까요?";
-            } else if (normalizedInput.match(/코딩|프로그래밍|컴퓨터/i)) {
-                return "코딩은 창의적인 문제 해결 방법이죠. 어떤 언어를 배우고 싶으신가요?";
-            } else if (normalizedInput.match(/음식|맛있는 음식|좋아하는 음식/i)) {
-                return "맛있는 음식은 기분을 좋게 만들어주죠! 좋아하는 음식은 무엇인가요?";
-            } else if (normalizedInput.match(/당신에게 인생이란 무엇인가요?|인생에 대해 물어봐/i)) {
-                return "인생은 사람마다 다르게 정의할 수 있어요. 저에게 인생이란 배우고 성장하는 여정이에요. 당신은 인생을 어떻게 정의하시나요?";
-            } else if (normalizedInput.match(/시간|시간 관리|효율적인 시간/i)) {
-                return "효율적인 시간 관리는 중요해요. 어떤 방식으로 시간을 관리하고 있나요?";
-            } else if (normalizedInput.match(/오늘|기분|오늘 기분/i)) {
-                return "오늘 기분은 어떤가요? 기분이 좋은 날은 무엇을 하시나요?";
-            } else if (normalizedInput.match(/여행|여행지|가고 싶은 나라/i)) {
-                return "여행은 새로운 경험을 쌓을 수 있는 좋은 방법이에요. 어떤 나라에 가고 싶으신가요?";
-            } else if (normalizedInput.match(/인생|삶|인생의 의미/i)) {
-                return "인생의 의미는 개인마다 다를 수 있어요. 당신에게 인생이란 무엇인가요?";
-            } else {
-                return "좋은 질문이에요! 하지만 이 주제에 대해서는 아직 배우지 못했어요. 다른 질문을 해주세요!";
-            }
-        }
-
-        function normalizeInput(input) {
-            return input.toLowerCase().replace(/\s+/g, ' ').trim(); // 공백 제거 및 소문자로 변환
         }
     </script>
+
 </body>
 </html>
