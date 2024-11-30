@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진의 AI</title> <!-- 타이틀 수정 -->
+    <title>남서진의 AI</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -118,8 +118,9 @@
         }
 
         function generateResponse(input) {
-            const normalizedInput = input.toLowerCase().trim();
+            const normalizedInput = normalizeInput(input);
 
+            // 다양한 질문에 유연하게 응답하기 위한 처리
             if (normalizedInput.includes("사랑")) {
                 return "사랑은 감정의 표현으로, 상대에 대한 애정과 헌신을 느끼는 것입니다. 당신은 사랑을 어떻게 정의하시나요?";
             } else if (normalizedInput.includes("음악")) {
@@ -153,6 +154,11 @@
             } else {
                 return "좋은 질문이에요! 아직 이 주제에 대해 배우지 못했지만, 더 많은 질문을 해 주세요.";
             }
+        }
+
+        // 입력 값에서 불필요한 공백을 제거하고 소문자로 변환하여 정규화
+        function normalizeInput(input) {
+            return input.toLowerCase().replace(/\s+/g, ' ').trim(); // 공백 제거 및 소문자로 변환
         }
     </script>
 </body>
