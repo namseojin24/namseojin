@@ -3,198 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진의 대화형 AI</title>
+    <title>남서진의 AI</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            text-align: center;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            width: 100%;
-            padding: 10px;
         }
 
         h1 {
-            font-size: 2.5rem;
             color: #333;
+            margin-bottom: 20px;
         }
 
         .chat-container {
             width: 400px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 10px;
         }
 
         .chat-box {
             width: 100%;
             height: 300px;
-            background-color: #fafafa;
+            overflow-y: auto;
             border: 1px solid #ddd;
-            border-radius: 10px;
             padding: 10px;
-            overflow-y: scroll;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            background: #fafafa;
         }
 
-        .user-input {
-            width: 80%;
-            padding: 10px;
-            margin-right: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .send-btn {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #007bff;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-
-        .send-btn:hover {
-            background-color: #0056b3;
-        }
-
-        footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #aaa;
+        .message {
+            margin: 5px 0;
         }
 
         .user {
             text-align: right;
-            margin: 5px;
-            background-color: #e0f7fa;
-            padding: 8px;
-            border-radius: 5px;
+            color: #007bff;
         }
 
         .ai {
             text-align: left;
-            margin: 5px;
-            background-color: #f1f1f1;
-            padding: 8px;
-            border-radius: 5px;
+            color: #333;
         }
 
-        .question-container {
-            margin-top: 20px;
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .input-container button {
+            padding: 10px;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .input-container button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>남서진의 대화형 AI</h1>
-        <p>다양한 질문에 대답하는 AI와 대화해보세요!</p>
-    </header>
-
+    <h1>남서진의 AI</h1>
     <div class="chat-container">
-        <div class="chat-box" id="chat-box"></div>
-
-        <input type="text" id="user-input" class="user-input" placeholder="질문을 입력하세요...">
-        <button id="send-btn" class="send-btn">전송</button>
+        <div id="chat-box" class="chat-box"></div>
+        <div class="input-container">
+            <input id="user-input" type="text" placeholder="질문을 입력하세요...">
+            <button id="send-btn">전송</button>
+        </div>
     </div>
 
-    <footer>
-        <p>© 2024 남서진. 모든 권리 보유.</p>
-    </footer>
-
     <script>
-        document.getElementById('send-btn').addEventListener('click', function() {
-            let userInput = document.getElementById('user-input').value;
-            if (userInput.trim() !== "") {
-                displayMessage(userInput, 'user');
-                getAIResponse(userInput);
-                document.getElementById('user-input').value = ''; // 입력란 비우기
+        document.getElementById("send-btn").addEventListener("click", function() {
+            let userInput = document.getElementById("user-input").value.trim();
+            if (userInput) {
+                displayMessage(userInput, "user");
+                processInput(userInput);
+                document.getElementById("user-input").value = "";
             }
         });
 
         function displayMessage(message, sender) {
-            let chatBox = document.getElementById('chat-box');
-            let newMessage = document.createElement('div');
-            newMessage.classList.add(sender);
-            newMessage.textContent = message;
-            chatBox.appendChild(newMessage);
-            chatBox.scrollTop = chatBox.scrollHeight; // 자동 스크롤
+            const chatBox = document.getElementById("chat-box");
+            const messageElement = document.createElement("div");
+            messageElement.className = `message ${sender}`;
+            messageElement.textContent = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        function getAIResponse(input) {
+        function processInput(input) {
+            const normalizedInput = input.toLowerCase();
             let response = "";
-            let normalizedInput = input.trim().toLowerCase();  // 소문자로 변환하여 일관되게 처리
 
-            // 질문에 대한 AI 응답을 정의
-            if (normalizedInput.includes("안녕하세요") || normalizedInput.includes("안녕")) {
-                response = "안녕하세요! 무엇을 도와드릴까요?";
-            }
-            else if (normalizedInput.includes("시간")) {
-                response = `현재 시간은 ${new Date().toLocaleTimeString()}입니다.`;
-            }
-            else if (normalizedInput.includes("날씨")) {
-                response = "날씨에 대해서는 알려드릴 수 없지만, 밖에 나가서 확인해 보세요!";
-            }
-            else if (normalizedInput.includes("음악")) {
-                response = "어떤 음악을 좋아하시나요? 다양한 장르가 있어요!";
-            }
-            else if (normalizedInput.includes("책")) {
-                response = "책을 좋아하시나요? 최근 읽은 책이 있나요?";
-            }
-            else if (normalizedInput.includes("영화")) {
-                response = "영화를 좋아하시나요? 어떤 장르의 영화를 좋아하세요?";
-            }
-            else if (normalizedInput.includes("게임")) {
-                response = "게임 좋아하시나요? 최근에 즐긴 게임이 있나요?";
-            }
-            else if (normalizedInput.includes("음식")) {
-                response = "음식에 대해 이야기하는 걸 좋아하시나요? 어떤 음식을 좋아하세요?";
-            }
-            else if (normalizedInput.includes("기술")) {
-                response = "기술에 대해 많은 것을 알고 있습니다. 어떤 기술에 대해 궁금하신가요?";
-            }
-            else if (normalizedInput.includes("취미")) {
-                response = "취미가 무엇인가요? 여러 가지 취미를 공유할 수 있어요!";
-            }
-            else if (normalizedInput.includes("사랑")) {
-                response = "사랑에 대해 이야기하고 싶으신가요? 제게 말해 주세요!";
-            }
-            else if (normalizedInput.includes("인생")) {
-                response = "인생에 대한 이야기, 너무나도 흥미롭죠! 어떤 생각을 가지고 계신가요?";
-            }
-            else if (normalizedInput.includes("친구")) {
-                response = "친구와의 관계는 중요하죠! 당신에게 가장 중요한 친구는 누구인가요?";
-            }
-            else if (normalizedInput.includes("자기소개")) {
-                response = "저는 AI입니다! 질문을 통해 많은 것들을 배워가고 있어요.";
-            }
-            else if (normalizedInput.includes("이해")) {
-                response = "당신의 말을 잘 이해했습니다! 다른 질문을 해주세요.";
-            }
-            else {
-                response = "저는 아직 그 질문에 대해 답을 준비하지 않았습니다. 다른 질문을 해주세요!";
+            // 자유로운 질문 분석 및 응답
+            if (normalizedInput.includes("안녕")) {
+                response = "안녕하세요! 오늘 기분은 어떠신가요?";
+            } else if (normalizedInput.includes("시간")) {
+                response = `지금은 ${new Date().toLocaleTimeString()}입니다.`;
+            } else if (normalizedInput.includes("음악") || normalizedInput.includes("노래")) {
+                response = "음악을 좋아하시나요? 좋아하는 장르는 무엇인가요?";
+            } else if (normalizedInput.includes("책") || normalizedInput.includes("독서")) {
+                response = "책 읽는 걸 좋아하시나요? 추천해 드릴까요?";
+            } else if (normalizedInput.includes("게임")) {
+                response = "게임 좋아하세요? 어떤 게임을 즐기시나요?";
+            } else if (normalizedInput.includes("영화")) {
+                response = "영화는 어떤 장르를 좋아하시나요? 최근 본 영화 중에 재미있던 게 있었나요?";
+            } else if (normalizedInput.includes("취미")) {
+                response = "취미가 무엇인가요? 새로운 취미를 시작하는 것도 좋을 것 같아요!";
+            } else if (normalizedInput.includes("사랑")) {
+                response = "사랑에 대해 이야기하고 싶으신가요? 어떤 주제로 이야기해볼까요?";
+            } else if (normalizedInput.includes("인생")) {
+                response = "인생에 대해 생각해볼 때, 가장 중요한 것은 무엇이라고 생각하시나요?";
+            } else if (normalizedInput.includes("날씨")) {
+                response = "오늘 날씨가 궁금하신가요? 지역에 따라 다를 수 있으니 확인해 보세요!";
+            } else {
+                response = "죄송하지만, 제가 이해하지 못한 것 같아요. 다른 방식으로 질문해 주실 수 있나요?";
             }
 
-            displayMessage(response, 'ai');
+            displayMessage(response, "ai");
         }
     </script>
 </body>
