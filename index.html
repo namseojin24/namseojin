@@ -94,6 +94,8 @@
     </div>
 
     <script>
+        let lastAnswer = ""; // 마지막 AI 답변을 저장
+
         document.getElementById("send-btn").addEventListener("click", function() {
             const userInput = document.getElementById("user-input").value.trim();
             if (userInput) {
@@ -115,12 +117,13 @@
         function getAIResponse(input) {
             const response = generateResponse(input);
             displayMessage(response, "ai");
+            lastAnswer = response; // AI의 마지막 답변 저장
         }
 
         function generateResponse(input) {
             const normalizedInput = normalizeInput(input);
 
-            // 대화형 질문과 다양한 표현 처리
+            // 다양한 질문 인식 및 대답
             if (normalizedInput.match(/사랑|애정|사랑이 뭐야|사랑이란/i)) {
                 return "사랑은 강한 애정과 헌신을 바탕으로 한 감정이에요. 당신은 사랑을 어떻게 정의하시나요?";
             } else if (normalizedInput.match(/음악|노래|좋아하는 음악/i)) {
@@ -131,6 +134,8 @@
                 return "코딩은 창의적인 문제 해결 방법이죠. 어떤 언어를 배우고 싶으신가요?";
             } else if (normalizedInput.match(/음식|맛있는 음식|좋아하는 음식/i)) {
                 return "맛있는 음식은 기분을 좋게 만들어주죠! 좋아하는 음식은 무엇인가요?";
+            } else if (normalizedInput.match(/당신에게 인생이란 무엇인가요?|인생에 대해 물어봐/i)) {
+                return "인생은 사람마다 다르게 정의할 수 있어요. 저에게 인생이란 배우고 성장하는 여정이에요. 당신은 인생을 어떻게 정의하시나요?";
             } else if (normalizedInput.match(/시간|시간 관리|효율적인 시간/i)) {
                 return "효율적인 시간 관리는 중요해요. 어떤 방식으로 시간을 관리하고 있나요?";
             } else if (normalizedInput.match(/오늘|기분|오늘 기분/i)) {
@@ -139,16 +144,6 @@
                 return "여행은 새로운 경험을 쌓을 수 있는 좋은 방법이에요. 어떤 나라에 가고 싶으신가요?";
             } else if (normalizedInput.match(/인생|삶|인생의 의미/i)) {
                 return "인생의 의미는 개인마다 다를 수 있어요. 당신에게 인생이란 무엇인가요?";
-            } else if (normalizedInput.match(/날씨|오늘 날씨|날씨가 어때/i)) {
-                return "날씨가 사람의 기분에 영향을 미치죠. 오늘 날씨는 어떤가요?";
-            } else if (normalizedInput.match(/행복|행복이란|행복을 찾는/i)) {
-                return "행복은 작은 순간들에서 찾을 수 있어요. 당신에게 행복이란 무엇인가요?";
-            } else if (normalizedInput.match(/일|일상|일하는 것/i)) {
-                return "일은 중요한 일이죠. 어떤 일을 하고 계신가요?";
-            } else if (normalizedInput.match(/시간|시간표|할 일/i)) {
-                return "오늘 할 일이 많나요? 어떻게 일정을 관리하고 있나요?";
-            } else if (normalizedInput.match(/인공지능|AI|기계학습/i)) {
-                return "인공지능은 사람처럼 생각하고 배우는 기계를 만드는 기술이에요. AI에 대해 더 알고 싶으신가요?";
             } else {
                 return "좋은 질문이에요! 하지만 이 주제에 대해서는 아직 배우지 못했어요. 다른 질문을 해주세요!";
             }
