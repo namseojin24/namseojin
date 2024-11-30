@@ -99,87 +99,18 @@
             border-radius: 5px;
         }
 
-        #faq {
-            margin-bottom: 20px;
-        }
-
-        #faq h3 {
-            margin-bottom: 10px;
-        }
-
-        #faq ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        #faq li {
-            cursor: pointer;
-            margin-bottom: 5px;
-            color: #007bff;
-        }
-
-        #faq li:hover {
-            text-decoration: underline;
-        }
-
-        .category-select {
-            margin-bottom: 20px;
-        }
-
-        .category-select select {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+        .question-container {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>남서진의 대화형 AI</h1>
-        <p>다양한 질문에 대해 대답하는 AI와 대화해보세요!</p>
+        <p>다양한 질문에 대답하는 AI와 대화해보세요!</p>
     </header>
 
     <div class="chat-container">
-        <div id="faq">
-            <h3>자주 묻는 질문</h3>
-            <ul>
-                <li onclick="askQuestion('안녕하세요')">안녕하세요</li>
-                <li onclick="askQuestion('기분')">기분</li>
-                <li onclick="askQuestion('시간')">현재 시간</li>
-                <li onclick="askQuestion('내일 계획')">내일 계획</li>
-                <li onclick="askQuestion('게임')">게임</li>
-                <li onclick="askQuestion('영화')">영화</li>
-                <li onclick="askQuestion('음악')">음악</li>
-                <li onclick="askQuestion('취미')">취미</li>
-                <li onclick="askQuestion('먹을 것')">먹을 것</li>
-                <li onclick="askQuestion('기술')">기술</li>
-                <li onclick="askQuestion('책')">책</li>
-            </ul>
-        </div>
-
-        <div class="category-select">
-            <label for="category">질문 카테고리:</label>
-            <select id="category">
-                <option value="greeting">인사</option>
-                <option value="mood">기분</option>
-                <option value="time">시간</option>
-                <option value="plans">내일 계획</option>
-                <option value="games">게임</option>
-                <option value="movies">영화</option>
-                <option value="music">음악</option>
-                <option value="hobbies">취미</option>
-                <option value="food">먹을 것</option>
-                <option value="technology">기술</option>
-                <option value="books">책</option>
-                <option value="sports">스포츠</option>
-                <option value="travel">여행</option>
-                <option value="science">과학</option>
-                <option value="philosophy">철학</option>
-                <option value="politics">정치</option>
-                <option value="history">역사</option>
-            </select>
-        </div>
-
         <div class="chat-box" id="chat-box"></div>
 
         <input type="text" id="user-input" class="user-input" placeholder="질문을 입력하세요...">
@@ -211,70 +142,59 @@
 
         function getAIResponse(input) {
             let response = "";
-            let category = document.getElementById("category").value;
+            let normalizedInput = input.trim().toLowerCase();  // 소문자로 변환하여 일관되게 처리
 
-            // 다양한 카테고리별 AI 응답
-            if (category === "greeting") {
+            // 질문에 대한 AI 응답을 정의
+            if (normalizedInput.includes("안녕하세요") || normalizedInput.includes("안녕")) {
                 response = "안녕하세요! 무엇을 도와드릴까요?";
             }
-            else if (category === "mood") {
-                response = "저는 기분이 좋습니다! 😊 여러분은 어떠신가요?";
-            }
-            else if (category === "time") {
+            else if (normalizedInput.includes("시간")) {
                 response = `현재 시간은 ${new Date().toLocaleTimeString()}입니다.`;
             }
-            else if (category === "plans") {
-                response = "내일의 계획을 함께 생각해볼까요?";
+            else if (normalizedInput.includes("날씨")) {
+                response = "날씨에 대해서는 알려드릴 수 없지만, 밖에 나가서 확인해 보세요!";
             }
-            else if (category === "games") {
-                response = "게임 좋아하시나요? 어떤 게임을 좋아하나요?";
+            else if (normalizedInput.includes("음악")) {
+                response = "어떤 음악을 좋아하시나요? 다양한 장르가 있어요!";
             }
-            else if (category === "movies") {
-                response = "영화는 좋아하시나요? 최근에 본 영화가 있나요?";
+            else if (normalizedInput.includes("책")) {
+                response = "책을 좋아하시나요? 최근 읽은 책이 있나요?";
             }
-            else if (category === "music") {
-                response = "어떤 음악 장르를 좋아하시나요? 클래식, 힙합, 재즈 등 여러 장르가 있어요!";
+            else if (normalizedInput.includes("영화")) {
+                response = "영화를 좋아하시나요? 어떤 장르의 영화를 좋아하세요?";
             }
-            else if (category === "hobbies") {
-                response = "취미가 무엇인가요? 함께 이야기해봐요!";
+            else if (normalizedInput.includes("게임")) {
+                response = "게임 좋아하시나요? 최근에 즐긴 게임이 있나요?";
             }
-            else if (category === "food") {
-                response = "음식을 좋아하시나요? 좋아하는 음식은 무엇인가요?";
+            else if (normalizedInput.includes("음식")) {
+                response = "음식에 대해 이야기하는 걸 좋아하시나요? 어떤 음식을 좋아하세요?";
             }
-            else if (category === "technology") {
-                response = "기술에 대해 궁금한 점이 있나요? 최신 기술 트렌드에 대해 알려드릴게요!";
+            else if (normalizedInput.includes("기술")) {
+                response = "기술에 대해 많은 것을 알고 있습니다. 어떤 기술에 대해 궁금하신가요?";
             }
-            else if (category === "books") {
-                response = "최근 읽은 책이 있나요? 아니면 추천해드릴 책이 있어요!";
+            else if (normalizedInput.includes("취미")) {
+                response = "취미가 무엇인가요? 여러 가지 취미를 공유할 수 있어요!";
             }
-            else if (category === "sports") {
-                response = "스포츠는 좋아하시나요? 어떤 종목을 즐기시나요?";
+            else if (normalizedInput.includes("사랑")) {
+                response = "사랑에 대해 이야기하고 싶으신가요? 제게 말해 주세요!";
             }
-            else if (category === "travel") {
-                response = "여행을 좋아하시나요? 가장 가보고 싶은 장소는 어디인가요?";
+            else if (normalizedInput.includes("인생")) {
+                response = "인생에 대한 이야기, 너무나도 흥미롭죠! 어떤 생각을 가지고 계신가요?";
             }
-            else if (category === "science") {
-                response = "과학에 대한 이야기를 나누고 싶으신가요? 궁금한 분야가 있으면 말씀해 주세요!";
+            else if (normalizedInput.includes("친구")) {
+                response = "친구와의 관계는 중요하죠! 당신에게 가장 중요한 친구는 누구인가요?";
             }
-            else if (category === "philosophy") {
-                response = "철학에 대해 이야기하고 싶으신가요? 어떤 철학적 질문이 궁금한가요?";
+            else if (normalizedInput.includes("자기소개")) {
+                response = "저는 AI입니다! 질문을 통해 많은 것들을 배워가고 있어요.";
             }
-            else if (category === "politics") {
-                response = "정치에 대한 의견을 나누고 싶으신가요?";
-            }
-            else if (category === "history") {
-                response = "역사에 대해 이야기해볼까요? 가장 관심 있는 시대나 사건은 무엇인가요?";
+            else if (normalizedInput.includes("이해")) {
+                response = "당신의 말을 잘 이해했습니다! 다른 질문을 해주세요.";
             }
             else {
-                response = "저는 아직 그 질문에 대한 답을 준비 중입니다.";
+                response = "저는 아직 그 질문에 대해 답을 준비하지 않았습니다. 다른 질문을 해주세요!";
             }
 
             displayMessage(response, 'ai');
-        }
-
-        function askQuestion(question) {
-            displayMessage(question, 'user');
-            getAIResponse(question);
         }
     </script>
 </body>
