@@ -7,200 +7,144 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f9;
+            margin: 0;
+            background-color: #f4f4f4;
         }
         .container {
-            display: flex;
-            justify-content: space-between;
-            width: 80%;
-            max-width: 1000px;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .left, .right {
-            width: 45%;
+            width: 60%;
             text-align: center;
         }
-        .left button, .right button {
-            padding: 15px 30px;
-            font-size: 18px;
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
             background-color: #4CAF50;
             color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 10px;
-            width: 100%;
+            border-radius: 5px;
         }
-        .left button:hover, .right button:hover {
-            background-color: #45a049;
-        }
-        .chatbox, .questionbox {
+        .center-content {
             display: none;
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
             text-align: center;
-        }
-        .chatbox input, .questionbox input {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-            width: 80%;
-        }
-        .messages, .answers {
-            height: 400px;
-            overflow-y: scroll;
-            margin-bottom: 10px;
-            padding-right: 10px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-        }
-        .response {
-            background-color: #f1f1f1;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px 0;
-        }
-        .user-question {
-            background-color: #e3f2fd;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px 0;
         }
         .back-button {
-            font-size: 14px;
-            background-color: #4CAF50;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #f44336;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
-            margin: 10px;
-            padding: 10px 20px;
-            width: auto;
         }
-        .back-button:hover {
-            background-color: #45a049;
+        .question-box, .chat-box {
+            display: none;
+            margin: 20px auto;
+            width: 80%;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- 왼쪽: 대화하기 버튼 -->
-        <div class="left" id="leftMenu">
-            <h1>남서진 AI</h1>
-            <button id="startChatButton">남서진 AI와 대화하기</button>
-        </div>
-        <!-- 오른쪽: 질문하기 버튼 -->
-        <div class="right">
-            <button id="askQuestionButton">남서진 AI에게 질문하기</button>
-        </div>
+<div class="container">
+    <!-- 원래 보여지는 버튼들 -->
+    <div class="buttons" id="menu-buttons">
+        <button class="button" id="talk-button">남서진 AI와 대화하기</button>
+        <button class="button" id="question-button">남서진 AI에게 질문하기</button>
     </div>
 
     <!-- 대화창 -->
-    <div class="chatbox" id="chatbox">
-        <button class="back-button" id="backToMenuFromChat">메뉴로 돌아가기</button>
-        <div class="messages" id="messages"></div>
-        <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
+    <div class="center-content" id="chat-box">
+        <div class="chat-box">
+            <h3>남서진 AI와 대화하기</h3>
+            <p id="chat-response">무엇을 이야기하고 싶으세요?</p>
+            <input type="text" id="chat-input" placeholder="대화를 입력하세요...">
+            <button class="button" id="chat-submit">전송</button>
+            <button class="back-button" id="back-from-chat">메뉴로 돌아가기</button>
+        </div>
     </div>
 
     <!-- 질문창 -->
-    <div class="questionbox" id="questionbox">
-        <button class="back-button" id="backToMenuFromQuestion">메뉴로 돌아가기</button>
-        <div class="answers" id="answers"></div>
-        <input type="text" id="questionInput" placeholder="질문을 입력하세요..." />
+    <div class="center-content" id="question-box">
+        <div class="question-box">
+            <h3>남서진 AI에게 질문하기</h3>
+            <input type="text" id="question-input" placeholder="질문을 입력하세요...">
+            <button class="button" id="question-submit">전송</button>
+            <button class="back-button" id="back-from-question">메뉴로 돌아가기</button>
+        </div>
     </div>
 
-    <script>
-        const aiResponses = {
-            "이름": "저는 남서진의 AI입니다! 당신의 이름은 무엇인가요?",
-            "이름이 뭐야": "저는 남서진의 AI입니다! 당신의 이름은 무엇인가요?",
-            "어디에서 왔나요": "저는 인터넷에서 태어났습니다!",
-            "좋아하는 영화": "저는 SF 영화나 판타지 영화를 좋아해요.",
-            "좋아하는 음악": "저는 다양한 음악 장르를 좋아하지만, 특히 클래식과 팝을 좋아해요.",
-            "가장 좋아하는 음식": "피자와 치킨을 좋아합니다!",
-            "행복": "행복이란, 작은 순간에 감사하며 살 수 있는 마음이라고 생각해요.",
-            "자유": "자유는 스스로 결정하고 선택할 수 있는 권리라고 생각해요.",
-            "사랑": "사랑은 다른 사람을 이해하고, 배려하는 마음에서 시작된다고 믿어요.",
-            "기억": "기억은 우리가 살아가는 동안 많은 경험을 통해 쌓여가는 소중한 자산이죠.",
-            "도움": "도움이 필요하신가요? 구체적으로 말씀해 주세요.",
-            "인생": "인생은 스스로 만들어가는 여행이죠. 매 순간을 소중히 여기세요.",
-            "성공": "성공은 목표를 향해 꾸준히 나가는 것이라고 생각해요.",
-            "사람": "사람은 다양한 경험을 통해 성장하고 변화하는 존재예요.",
-            "시간": "시간은 소중한 자원입니다. 잘 활용해야 해요.",
-            "여행": "여행은 새로운 문화와 경험을 접할 수 있는 멋진 기회예요.",
-            "꿈": "꿈은 우리가 이루고자 하는 목표를 의미해요."
-        };
+</div>
 
-        // 버튼 클릭 시 화면 전환
-        document.getElementById("startChatButton").addEventListener("click", function() {
-            document.getElementById("leftMenu").style.display = "none";
-            document.getElementById("askQuestionButton").style.display = "none";
-            document.getElementById("chatbox").style.display = "block";
-        });
+<script>
+    const talkButton = document.getElementById('talk-button');
+    const questionButton = document.getElementById('question-button');
+    const backFromChatButton = document.getElementById('back-from-chat');
+    const backFromQuestionButton = document.getElementById('back-from-question');
+    const chatBox = document.getElementById('chat-box');
+    const questionBox = document.getElementById('question-box');
+    const menuButtons = document.getElementById('menu-buttons');
 
-        document.getElementById("askQuestionButton").addEventListener("click", function() {
-            document.getElementById("leftMenu").style.display = "none";
-            document.getElementById("startChatButton").style.display = "none";
-            document.getElementById("questionbox").style.display = "block";
-        });
+    // 대화하기 버튼 클릭 시
+    talkButton.addEventListener('click', () => {
+        menuButtons.style.display = 'none'; // 원래 버튼들 숨기기
+        chatBox.style.display = 'block'; // 대화창 표시
+    });
 
-        // 메뉴로 돌아가기 버튼
-        document.getElementById("backToMenuFromChat").addEventListener("click", function() {
-            document.getElementById("leftMenu").style.display = "block";
-            document.getElementById("askQuestionButton").style.display = "block";
-            document.getElementById("chatbox").style.display = "none";
-        });
+    // 질문하기 버튼 클릭 시
+    questionButton.addEventListener('click', () => {
+        menuButtons.style.display = 'none'; // 원래 버튼들 숨기기
+        questionBox.style.display = 'block'; // 질문창 표시
+    });
 
-        document.getElementById("backToMenuFromQuestion").addEventListener("click", function() {
-            document.getElementById("leftMenu").style.display = "block";
-            document.getElementById("startChatButton").style.display = "block";
-            document.getElementById("questionbox").style.display = "none";
-        });
+    // 대화창에서 메뉴로 돌아가기 버튼 클릭 시
+    backFromChatButton.addEventListener('click', () => {
+        menuButtons.style.display = 'flex'; // 원래 버튼들 다시 보이기
+        chatBox.style.display = 'none'; // 대화창 숨기기
+    });
 
-        // 대화창에서 사용자의 질문 처리
-        document.getElementById("userInput").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-                const userQuestion = e.target.value.trim();
-                const response = aiResponses[userQuestion] || "저는 그 질문에 대한 답을 모르겠어요.";
-                const messageDiv = document.createElement("div");
-                messageDiv.classList.add("user-question");
-                messageDiv.textContent = userQuestion;
-                document.getElementById("messages").appendChild(messageDiv);
+    // 질문창에서 메뉴로 돌아가기 버튼 클릭 시
+    backFromQuestionButton.addEventListener('click', () => {
+        menuButtons.style.display = 'flex'; // 원래 버튼들 다시 보이기
+        questionBox.style.display = 'none'; // 질문창 숨기기
+    });
 
-                const responseDiv = document.createElement("div");
-                responseDiv.classList.add("response");
-                responseDiv.textContent = response;
-                document.getElementById("messages").appendChild(responseDiv);
+    // 대화하기 처리 (간단한 예시로 사용자의 입력을 답변으로 처리)
+    const chatInput = document.getElementById('chat-input');
+    const chatResponse = document.getElementById('chat-response');
 
-                e.target.value = "";
-            }
-        });
+    document.getElementById('chat-submit').addEventListener('click', () => {
+        const userMessage = chatInput.value;
+        if (userMessage.trim() !== '') {
+            chatResponse.textContent = `AI의 응답: ${userMessage}`; // 간단한 예시로, 사용자가 입력한 내용 그대로 응답
+            chatInput.value = '';
+        }
+    });
 
-        // 질문창에서 사용자의 질문 처리
-        document.getElementById("questionInput").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-                const userQuestion = e.target.value.trim();
-                const response = aiResponses[userQuestion] || "저는 그 질문에 대한 답을 모르겠어요.";
-                const answerDiv = document.createElement("div");
-                answerDiv.classList.add("response");
-                answerDiv.textContent = response;
-                document.getElementById("answers").appendChild(answerDiv);
-                
-                e.target.value = "";
-            }
-        });
-    </script>
+    // 질문하기 처리 (간단한 예시로 질문에 답변하는 형태)
+    const questionInput = document.getElementById('question-input');
+
+    document.getElementById('question-submit').addEventListener('click', () => {
+        const question = questionInput.value;
+        if (question.trim() !== '') {
+            alert(`질문에 대한 답변: "${question}"에 대한 답변을 준비중입니다.`); // 예시 답변
+            questionInput.value = '';
+        }
+    });
+</script>
 
 </body>
 </html>
