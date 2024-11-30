@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진 AI와 대화하기</title>
+    <title>남서진 AI와 말하기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,7 +16,11 @@
             height: 100vh;
             flex-direction: column;
         }
+        .main-container {
+            text-align: center;
+        }
         .chatbox {
+            display: none;
             width: 80%;
             max-width: 600px;
             background-color: white;
@@ -50,77 +54,89 @@
             border-radius: 5px;
             margin: 5px 0;
         }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
-    <div class="chatbox">
-        <div class="messages" id="messages"></div>
-        <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
+    <div class="main-container">
+        <h1>남서진 AI와 말하기</h1>
+        <p>대화하고 싶은 질문을 입력해 주세요!</p>
+        <button id="startChatButton">남서진 AI에게 질문하기</button>
+
+        <div class="chatbox" id="chatbox">
+            <div class="messages" id="messages"></div>
+            <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
+        </div>
     </div>
 
     <script>
-        const questionsAndAnswers = [
-            "당신의 이름은 무엇인가요?", "당신은 어디에서 왔나요?", "당신은 무엇을 좋아하나요?", "오늘 날씨가 어때요?", "당신은 어떤 영화를 좋아하나요?",
-            "자신의 꿈은 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?", "음악을 좋아하나요?", "당신의 취미는 무엇인가요?", "최근 읽은 책은 무엇인가요?",
-            "가장 좋아하는 음식은 무엇인가요?", "당신은 언제 행복한가요?", "사람들은 당신을 어떻게 생각하나요?", "가장 좋아하는 계절은 무엇인가요?",
-            "오늘 하루 어땠나요?", "어떤 스포츠를 좋아하나요?", "언제 가장 긴장을 하나요?", "당신은 아침형 인간인가요, 밤형 인간인가요?", "좋아하는 색깔은 무엇인가요?",
-            "가장 좋아하는 동물은 무엇인가요?", "어릴 적 꿈은 무엇이었나요?", "인생에서 가장 중요한 것은 무엇인가요?", "행복이란 무엇인가요?", "어떤 사람을 존경하나요?",
-            "가장 좋아하는 나라나 도시는 어디인가요?", "가장 기억에 남는 생일은 언제였나요?", "미래에 대해 어떻게 생각하나요?", "최근에 배운 것이 무엇인가요?",
-            "시간 여행이 가능하다면 어느 시점으로 가고 싶나요?", "가장 자랑스러운 성취는 무엇인가요?", "어떤 직업을 꿈꾸나요?", "가장 좋아하는 취미는 무엇인가요?",
-            "세상에서 가장 궁금한 점은 무엇인가요?", "어떤 종류의 영화가 마음에 드나요?", "어떤 종류의 책을 좋아하나요?", "운동을 자주 하나요?", "어떤 종류의 음악을 좋아하나요?",
-            "휴식을 취할 때 좋아하는 방법은 무엇인가요?", "여행을 가고 싶은 곳은 어디인가요?", "무엇을 배우고 싶나요?", "어떤 사람과 대화하는 걸 좋아하나요?", "가장 중요한 인생의 교훈은 무엇인가요?",
-            "어떤 음식을 먹을 때 기분이 좋아지나요?", "어떤 사람과 시간을 보내는 걸 좋아하나요?", "어떤 기분이 들 때 행복한가요?", "자신에게 중요한 가치는 무엇인가요?", "당신의 하루 루틴은 어떤가요?",
-            "가장 최근에 본 영화는 무엇인가요?", "어떤 주제로 대화하는 걸 좋아하나요?", "최근에 얻은 깨달음은 무엇인가요?", "어떤 여행지를 추천하고 싶나요?", "당신의 이상형은 어떤 사람인가요?",
-            "어떤 도전이 가장 기억에 남나요?", "인생에서 후회하는 일은 무엇인가요?", "무엇을 할 때 시간이 가는 줄 모르나요?", "가장 좋아하는 계절은 무엇인가요?", "세상을 바꿀 수 있다면 무엇을 바꾸고 싶나요?",
-            "어떤 종류의 여행을 좋아하나요?", "당신의 인생에서 중요한 순간은 무엇인가요?", "자신의 성격을 한 마디로 표현한다면?", "최근에 한 좋은 일은 무엇인가요?", "어떤 사람을 가장 좋아하나요?",
-            "어떤 곳에서 가장 평화롭다고 느끼나요?", "당신이 가장 자신 있는 일은 무엇인가요?", "가장 감동적인 경험은 무엇인가요?", "어떤 음악이 기분을 좋게 하나요?", "가장 좋아하는 계절은 무엇인가요?",
-            "가장 중요한 가치는 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?", "자신에게 도전이 된다면 무엇을 해보고 싶나요?", "최근에 했던 새로운 경험은 무엇인가요?", "어떤 음식을 먹을 때 가장 행복한가요?",
-            "당신의 롤모델은 누구인가요?", "어떤 사람이 되기를 원하나요?", "세상에서 가장 좋아하는 일은 무엇인가요?", "어떤 날에 가장 기분이 좋나요?", "인생에서 가장 큰 목표는 무엇인가요?",
-            "어떻게 스트레스를 풀까요?", "가장 좋아하는 색은 무엇인가요?", "가장 좋아하는 영화는 무엇인가요?", "어떤 책을 자주 읽나요?", "어떤 장소에서 가장 편안함을 느끼나요?",
-            "가장 좋아하는 운동은 무엇인가요?", "어떤 사람과 대화하는 게 좋나요?", "최근에 배운 점은 무엇인가요?", "어떤 취미가 있나요?", "어떤 종류의 동물을 좋아하나요?",
-            "자신의 강점은 무엇인가요?", "자신의 약점은 무엇인가요?", "가장 감동적인 책이나 영화는 무엇인가요?", "어떤 사람과 함께 있으면 기분이 좋나요?", "어떤 일이 가장 보람되나요?",
-            "어떤 일에서 스트레스를 느끼나요?", "어떤 음식을 좋아하나요?", "어떤 순간에 가장 행복감을 느끼나요?", "가장 큰 성취감을 느꼈던 순간은 언제인가요?", "어떤 사람을 존경하나요?",
-            "행복은 무엇인가요?", "사랑은 무엇인가요?", "자유는 무엇인가요?", "성공이란 무엇인가요?", "진정한 친구는 누구인가요?", "당신의 인생에서 가장 중요한 것은 무엇인가요?",
-            "어떤 일을 할 때 가장 기분이 좋나요?", "어떤 활동을 할 때 시간 가는 줄 모르나요?", "자신의 미래를 어떻게 상상하나요?", "어떤 삶을 살고 싶나요?", "자신에게 가장 중요한 것은 무엇인가요?",
-            "어떤 일에서 자부심을 느끼나요?", "어떤 목표를 달성하고 싶나요?", "당신의 꿈은 무엇인가요?", "지금 현재 가장 필요한 것은 무엇인가요?", "어떤 사람을 만나고 싶나요?",
-            "가장 중요한 가치는 무엇인가요?", "어떤 사람을 가장 존경하나요?", "어떤 일에서 성취감을 느끼나요?", "가장 좋아하는 취미는 무엇인가요?", "어떤 사람과 대화하는 게 좋나요?"
-            // 여기에 더 많은 질문을 계속 추가하실 수 있습니다.
-        ];
+        const aiResponses = {
+            "이름": "저는 남서진의 AI입니다! 당신의 이름은 무엇인가요?",
+            "어디에서 왔나요": "저는 인터넷에서 태어났습니다!",
+            "좋아하는 영화": "저는 SF 영화나 판타지 영화를 좋아해요.",
+            "좋아하는 음악": "저는 다양한 음악 장르를 좋아하지만, 특히 클래식과 팝을 좋아해요.",
+            "가장 좋아하는 음식": "피자와 치킨을 좋아합니다!",
+            "행복": "행복이란, 작은 순간에 감사하며 살 수 있는 마음이라고 생각해요.",
+            "자유": "자유는 스스로 결정하고 선택할 수 있는 권리라고 생각해요.",
+            "사랑": "사랑은 다른 사람을 이해하고, 배려하는 마음에서 시작된다고 믿어요.",
+            "기억": "기억은 우리가 살아가는 동안 많은 경험을 통해 쌓여가는 소중한 자산이죠.",
+            "도움": "도움이 필요하신가요? 구체적으로 말씀해 주세요.",
+            "인생": "인생은 스스로 만들어가는 여행이죠. 매 순간을 소중히 여기세요.",
+            "성공": "성공은 목표를 향해 꾸준히 나가는 것이라고 생각해요.",
+            "사람": "사람은 다양한 경험을 통해 성장하고 변화하는 존재예요.",
+            "시간": "시간은 소중한 자원입니다. 잘 활용해야 해요.",
+            "여행": "여행은 새로운 문화와 경험을 접할 수 있는 멋진 기회예요.",
+            "꿈": "꿈은 우리가 이루고자 하는 목표와 비전을 담은 중요한 부분이에요.",
+            "기술": "기술은 사람들의 삶을 더 편리하고 효율적으로 만들어주는 중요한 요소예요.",
+            "책": "책은 다양한 지식과 경험을 제공해주며, 사람의 사고를 확장시키는 도구예요.",
+            "미래": "미래는 우리가 지금 어떻게 행동하는지에 따라 달라질 거예요."
+        };
 
-        let questionIndex = 0;
-
-        function addMessage(text, className) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add(className);
-            messageDiv.textContent = text;
-            document.getElementById('messages').appendChild(messageDiv);
+        // 메시지 출력 함수
+        function displayMessage(message, isUser = false) {
+            const messagesDiv = document.getElementById("messages");
+            const div = document.createElement("div");
+            div.classList.add(isUser ? "user-question" : "response");
+            div.textContent = message;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        function handleUserInput() {
-            const userInput = document.getElementById('userInput').value;
-            if (userInput.trim() === '') return;
-
-            addMessage(userInput, 'user-question');
-            document.getElementById('userInput').value = '';
-
-            if (questionIndex < questionsAndAnswers.length) {
-                setTimeout(() => {
-                    addMessage(questionsAndAnswers[questionIndex], 'response');
-                    questionIndex++;
-                }, 500);
-            } else {
-                setTimeout(() => {
-                    addMessage('질문을 다 했습니다. 대화를 다시 시작해 주세요!', 'response');
-                }, 500);
-            }
-        }
-
-        document.getElementById('userInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleUserInput();
+        // 사용자의 입력 처리
+        document.getElementById("userInput").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                const userInput = this.value.trim();
+                if (userInput) {
+                    displayMessage(userInput, true);
+                    const aiResponse = aiResponses[userInput] || "그 질문에 대한 답변을 알지 못해요. 다른 질문을 해보세요!";
+                    displayMessage(aiResponse);
+                }
+                this.value = "";
             }
         });
 
+        // 대화창 보이기 버튼 클릭 시
+        document.getElementById("startChatButton").addEventListener("click", function() {
+            document.querySelector(".main-container").style.display = "none";
+            document.getElementById("chatbox").style.display = "block";
+            displayMessage("안녕하세요! 무엇을 물어보시겠어요?", false);
+        });
     </script>
 </body>
 </html>
