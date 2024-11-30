@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진의 대화형 AI</title>
+    <title>남서진의 AI</title> <!-- 타이틀 수정 -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -84,7 +84,7 @@
     </style>
 </head>
 <body>
-    <h1>남서진의 대화형 AI</h1>
+    <h1>남서진의 AI</h1>
     <div class="chat-container">
         <div id="chat-box" class="chat-box"></div>
         <div class="input-container">
@@ -118,31 +118,38 @@
         }
 
         function generateResponse(input) {
-            const normalizedInput = input.toLowerCase();
+            const normalizedInput = input.toLowerCase().trim();
 
-            // 질문에 따라 적합한 답변을 생성
-            if (normalizedInput.includes("안녕") || normalizedInput.includes("hello")) {
-                return "안녕하세요! 무엇을 도와드릴까요?";
-            } else if (normalizedInput.includes("사랑이 무엇") || normalizedInput.includes("사랑")) {
-                return "사랑은 감정의 표현으로, 상대에 대한 애정과 헌신을 느끼는 것입니다. 당신은 사랑에 대해 어떻게 생각하시나요?";
-            } else if (normalizedInput.includes("인생이란") || normalizedInput.includes("인생")) {
-                return "인생은 각자에게 주어진 시간과 선택의 결과로 이루어지는 여정입니다. 당신은 어떤 인생을 살고 싶으신가요?";
-            } else if (normalizedInput.includes("행복이란") || normalizedInput.includes("행복")) {
-                return "행복은 순간순간 느끼는 기쁨과 만족감으로, 각자에게 의미가 다를 수 있습니다. 당신은 행복을 어디에서 찾으시나요?";
+            if (normalizedInput.includes("사랑")) {
+                return "사랑은 감정의 표현으로, 상대에 대한 애정과 헌신을 느끼는 것입니다. 당신은 사랑을 어떻게 정의하시나요?";
             } else if (normalizedInput.includes("음악")) {
-                return "음악은 감정을 표현하는 예술이자 언어입니다. 좋아하는 음악 장르가 있으신가요?";
-            } else if (normalizedInput.includes("책") || normalizedInput.includes("독서")) {
-                return "책은 새로운 세계를 열어주는 열쇠와 같습니다. 최근에 읽으신 책이 있나요?";
-            } else if (normalizedInput.includes("게임")) {
-                return "게임은 재미와 몰입을 제공합니다. 즐겨하는 게임이 있으신가요?";
-            } else if (normalizedInput.includes("영화") || normalizedInput.includes("드라마")) {
-                return "영화와 드라마는 이야기를 통해 감정을 전달합니다. 어떤 장르를 좋아하시나요?";
-            } else if (normalizedInput.includes("취미")) {
-                return "취미는 삶의 즐거움을 더해줍니다. 어떤 취미를 즐기시나요?";
-            } else if (normalizedInput.includes("도움") || normalizedInput.includes("도와줘")) {
-                return "제가 무엇을 도와드릴 수 있을까요? 구체적으로 말씀해 주세요.";
+                return "음악은 감정을 표현하는 방법이에요. 좋아하는 장르가 있으신가요?";
+            } else if (normalizedInput.includes("도움")) {
+                return "도움이 필요하시군요! 구체적으로 어떤 점에서 도움을 드릴까요?";
+            } else if (normalizedInput.includes("코딩")) {
+                return "코딩을 배우려면 HTML, CSS, JavaScript부터 시작해 보세요! 무엇을 도와드릴까요?";
+            } else if (normalizedInput.includes("색깔") || normalizedInput.includes("좋아하는 색")) {
+                return "모든 색깔이 각기 다른 매력을 가지고 있죠. 당신은 어떤 색을 좋아하시나요?";
+            } else if (normalizedInput.includes("음식")) {
+                return "음식에 대한 질문을 좋아하세요! 당신은 어떤 음식을 좋아하시나요?";
+            } else if (normalizedInput.includes("코딩 배우는 법")) {
+                return "코딩을 배우는 가장 좋은 방법은 실습입니다. 무료 자료로는 W3Schools와 MDN 웹 문서를 추천합니다.";
+            } else if (normalizedInput.includes("날씨")) {
+                return "날씨는 사람들의 기분에 큰 영향을 미쳐요. 오늘 날씨는 어떤가요?";
+            } else if (normalizedInput.includes("누구")) {
+                return "저는 남서진의 AI입니다. 질문에 답변하거나 도움을 드리는 것이 제 역할이에요!";
+            } else if (normalizedInput.includes("시간 관리")) {
+                return "시간 관리를 잘하려면 일정한 루틴을 만드는 것이 중요합니다. 우선순위를 정하고, 효율적으로 시간을 분배해 보세요!";
+            } else if (normalizedInput.includes("인생의 의미")) {
+                return "인생의 의미는 각자가 찾는 것이라 생각해요. 당신은 어떻게 생각하세요?";
+            } else if (normalizedInput.includes("오늘 기분")) {
+                return "오늘 기분은 어떠신가요? 기분이 좋은 날은 무엇을 하시나요?";
+            } else if (normalizedInput.includes("여행")) {
+                return "여행은 새로운 경험을 쌓을 수 있는 좋은 방법이죠. 좋아하는 여행지는 어디인가요?";
+            } else if (normalizedInput.includes("인공지능")) {
+                return "AI는 인간의 일부분을 대체할 수 있지만, 감정이나 창의력 등 인간만이 가진 고유의 특성을 대체할 수는 없습니다.";
             } else {
-                return "죄송해요, 아직 그 질문에 대한 답을 배우지 못했어요. 다른 질문을 해주시면 답변해 드릴게요!";
+                return "좋은 질문이에요! 아직 이 주제에 대해 배우지 못했지만, 더 많은 질문을 해 주세요.";
             }
         }
     </script>
