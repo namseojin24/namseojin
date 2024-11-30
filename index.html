@@ -3,149 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진 AI</title>
+    <title>남서진 AI와 대화하기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
+            flex-direction: column;
         }
-        .container {
-            width: 60%;
-            text-align: center;
-        }
-        .buttons {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-        .button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-        }
-        .center-content {
-            display: none;
-            text-align: center;
-        }
-        .back-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .question-box, .chat-box {
-            display: none;
-            margin: 20px auto;
+        .chatbox {
             width: 80%;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            max-width: 600px;
             background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .messages {
+            height: 400px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            padding-right: 10px;
+        }
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        .response {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .user-question {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <!-- 원래 보여지는 버튼들 -->
-    <div class="buttons" id="menu-buttons">
-        <button class="button" id="talk-button">남서진 AI와 대화하기</button>
-        <button class="button" id="question-button">남서진 AI에게 질문하기</button>
+    <div class="chatbox">
+        <div class="messages" id="messages"></div>
+        <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
     </div>
 
-    <!-- 대화창 -->
-    <div class="center-content" id="chat-box">
-        <div class="chat-box">
-            <h3>남서진 AI와 대화하기</h3>
-            <p id="chat-response">무엇을 이야기하고 싶으세요?</p>
-            <input type="text" id="chat-input" placeholder="대화를 입력하세요...">
-            <button class="button" id="chat-submit">전송</button>
-            <button class="back-button" id="back-from-chat">메뉴로 돌아가기</button>
-        </div>
-    </div>
+    <script>
+        const questionsAndAnswers = [
+            "당신의 이름은 무엇인가요?", "당신은 어디에서 왔나요?", "당신은 무엇을 좋아하나요?", "오늘 날씨가 어때요?", "당신은 어떤 영화를 좋아하나요?",
+            "자신의 꿈은 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?", "음악을 좋아하나요?", "당신의 취미는 무엇인가요?", "최근 읽은 책은 무엇인가요?",
+            "가장 좋아하는 음식은 무엇인가요?", "당신은 언제 행복한가요?", "사람들은 당신을 어떻게 생각하나요?", "가장 좋아하는 계절은 무엇인가요?",
+            "오늘 하루 어땠나요?", "어떤 스포츠를 좋아하나요?", "언제 가장 긴장을 하나요?", "당신은 아침형 인간인가요, 밤형 인간인가요?", "좋아하는 색깔은 무엇인가요?",
+            "가장 좋아하는 동물은 무엇인가요?", "어릴 적 꿈은 무엇이었나요?", "인생에서 가장 중요한 것은 무엇인가요?", "행복이란 무엇인가요?", "어떤 사람을 존경하나요?",
+            "가장 좋아하는 나라나 도시는 어디인가요?", "가장 기억에 남는 생일은 언제였나요?", "미래에 대해 어떻게 생각하나요?", "최근에 배운 것이 무엇인가요?",
+            "시간 여행이 가능하다면 어느 시점으로 가고 싶나요?", "가장 자랑스러운 성취는 무엇인가요?", "어떤 직업을 꿈꾸나요?", "가장 좋아하는 취미는 무엇인가요?",
+            "세상에서 가장 궁금한 점은 무엇인가요?", "어떤 종류의 영화가 마음에 드나요?", "어떤 종류의 책을 좋아하나요?", "운동을 자주 하나요?", "어떤 종류의 음악을 좋아하나요?",
+            "휴식을 취할 때 좋아하는 방법은 무엇인가요?", "여행을 가고 싶은 곳은 어디인가요?", "무엇을 배우고 싶나요?", "어떤 사람과 대화하는 걸 좋아하나요?", "가장 중요한 인생의 교훈은 무엇인가요?",
+            "어떤 음식을 먹을 때 기분이 좋아지나요?", "어떤 사람과 시간을 보내는 걸 좋아하나요?", "어떤 기분이 들 때 행복한가요?", "자신에게 중요한 가치는 무엇인가요?", "당신의 하루 루틴은 어떤가요?",
+            "가장 최근에 본 영화는 무엇인가요?", "어떤 주제로 대화하는 걸 좋아하나요?", "최근에 얻은 깨달음은 무엇인가요?", "어떤 여행지를 추천하고 싶나요?", "당신의 이상형은 어떤 사람인가요?",
+            "어떤 도전이 가장 기억에 남나요?", "인생에서 후회하는 일은 무엇인가요?", "무엇을 할 때 시간이 가는 줄 모르나요?", "가장 좋아하는 계절은 무엇인가요?", "세상을 바꿀 수 있다면 무엇을 바꾸고 싶나요?",
+            "어떤 종류의 여행을 좋아하나요?", "당신의 인생에서 중요한 순간은 무엇인가요?", "자신의 성격을 한 마디로 표현한다면?", "최근에 한 좋은 일은 무엇인가요?", "어떤 사람을 가장 좋아하나요?",
+            "어떤 곳에서 가장 평화롭다고 느끼나요?", "당신이 가장 자신 있는 일은 무엇인가요?", "가장 감동적인 경험은 무엇인가요?", "어떤 음악이 기분을 좋게 하나요?", "가장 좋아하는 계절은 무엇인가요?",
+            "가장 중요한 가치는 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?", "자신에게 도전이 된다면 무엇을 해보고 싶나요?", "최근에 했던 새로운 경험은 무엇인가요?", "어떤 음식을 먹을 때 가장 행복한가요?",
+            "당신의 롤모델은 누구인가요?", "어떤 사람이 되기를 원하나요?", "세상에서 가장 좋아하는 일은 무엇인가요?", "어떤 날에 가장 기분이 좋나요?", "인생에서 가장 큰 목표는 무엇인가요?",
+            "어떻게 스트레스를 풀까요?", "가장 좋아하는 색은 무엇인가요?", "가장 좋아하는 영화는 무엇인가요?", "어떤 책을 자주 읽나요?", "어떤 장소에서 가장 편안함을 느끼나요?",
+            "가장 좋아하는 운동은 무엇인가요?", "어떤 사람과 대화하는 게 좋나요?", "최근에 배운 점은 무엇인가요?", "어떤 취미가 있나요?", "어떤 종류의 동물을 좋아하나요?",
+            "자신의 강점은 무엇인가요?", "자신의 약점은 무엇인가요?", "가장 감동적인 책이나 영화는 무엇인가요?", "어떤 사람과 함께 있으면 기분이 좋나요?", "어떤 일이 가장 보람되나요?",
+            "어떤 일에서 스트레스를 느끼나요?", "어떤 음식을 좋아하나요?", "어떤 순간에 가장 행복감을 느끼나요?", "가장 큰 성취감을 느꼈던 순간은 언제인가요?", "어떤 사람을 존경하나요?",
+            "행복은 무엇인가요?", "사랑은 무엇인가요?", "자유는 무엇인가요?", "성공이란 무엇인가요?", "진정한 친구는 누구인가요?", "당신의 인생에서 가장 중요한 것은 무엇인가요?",
+            "어떤 일을 할 때 가장 기분이 좋나요?", "어떤 활동을 할 때 시간 가는 줄 모르나요?", "자신의 미래를 어떻게 상상하나요?", "어떤 삶을 살고 싶나요?", "자신에게 가장 중요한 것은 무엇인가요?",
+            "어떤 일에서 자부심을 느끼나요?", "어떤 목표를 달성하고 싶나요?", "당신의 꿈은 무엇인가요?", "지금 현재 가장 필요한 것은 무엇인가요?", "어떤 사람을 만나고 싶나요?",
+            "가장 중요한 가치는 무엇인가요?", "어떤 사람을 가장 존경하나요?", "어떤 일에서 성취감을 느끼나요?", "가장 좋아하는 취미는 무엇인가요?", "어떤 사람과 대화하는 게 좋나요?"
+            // 여기에 더 많은 질문을 계속 추가하실 수 있습니다.
+        ];
 
-    <!-- 질문창 -->
-    <div class="center-content" id="question-box">
-        <div class="question-box">
-            <h3>남서진 AI에게 질문하기</h3>
-            <input type="text" id="question-input" placeholder="질문을 입력하세요...">
-            <button class="button" id="question-submit">전송</button>
-            <button class="back-button" id="back-from-question">메뉴로 돌아가기</button>
-        </div>
-    </div>
+        let questionIndex = 0;
 
-</div>
-
-<script>
-    // 버튼들
-    const talkButton = document.getElementById('talk-button');
-    const questionButton = document.getElementById('question-button');
-    const backFromChatButton = document.getElementById('back-from-chat');
-    const backFromQuestionButton = document.getElementById('back-from-question');
-    const chatBox = document.getElementById('chat-box');
-    const questionBox = document.getElementById('question-box');
-    const menuButtons = document.getElementById('menu-buttons');
-
-    // 대화하기 버튼 클릭 시
-    talkButton.addEventListener('click', () => {
-        menuButtons.style.display = 'none'; // 원래 버튼들 숨기기
-        chatBox.style.display = 'block'; // 대화창 표시
-    });
-
-    // 질문하기 버튼 클릭 시
-    questionButton.addEventListener('click', () => {
-        menuButtons.style.display = 'none'; // 원래 버튼들 숨기기
-        questionBox.style.display = 'block'; // 질문창 표시
-    });
-
-    // 대화창에서 메뉴로 돌아가기 버튼 클릭 시
-    backFromChatButton.addEventListener('click', () => {
-        menuButtons.style.display = 'flex'; // 원래 버튼들 다시 보이기
-        chatBox.style.display = 'none'; // 대화창 숨기기
-    });
-
-    // 질문창에서 메뉴로 돌아가기 버튼 클릭 시
-    backFromQuestionButton.addEventListener('click', () => {
-        menuButtons.style.display = 'flex'; // 원래 버튼들 다시 보이기
-        questionBox.style.display = 'none'; // 질문창 숨기기
-    });
-
-    // 대화하기 처리 (간단한 예시로 사용자의 입력을 답변으로 처리)
-    const chatInput = document.getElementById('chat-input');
-    const chatResponse = document.getElementById('chat-response');
-
-    document.getElementById('chat-submit').addEventListener('click', () => {
-        const userMessage = chatInput.value;
-        if (userMessage.trim() !== '') {
-            chatResponse.textContent = `AI의 응답: ${userMessage}`; // 간단한 예시로, 사용자가 입력한 내용 그대로 응답
-            chatInput.value = '';
+        function addMessage(text, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add(className);
+            messageDiv.textContent = text;
+            document.getElementById('messages').appendChild(messageDiv);
         }
-    });
 
-    // 질문하기 처리 (간단한 예시로 질문에 답변하는 형태)
-    const questionInput = document.getElementById('question-input');
+        function handleUserInput() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() === '') return;
 
-    document.getElementById('question-submit').addEventListener('click', () => {
-        const question = questionInput.value;
-        if (question.trim() !== '') {
-            alert(`질문에 대한 답변: "${question}"에 대한 답변을 준비중입니다.`); // 예시 답변
-            questionInput.value = '';
+            addMessage(userInput, 'user-question');
+            document.getElementById('userInput').value = '';
+
+            if (questionIndex < questionsAndAnswers.length) {
+                setTimeout(() => {
+                    addMessage(questionsAndAnswers[questionIndex], 'response');
+                    questionIndex++;
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    addMessage('질문을 다 했습니다. 대화를 다시 시작해 주세요!', 'response');
+                }, 500);
+            }
         }
-    });
-</script>
 
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleUserInput();
+            }
+        });
+
+    </script>
 </body>
 </html>
