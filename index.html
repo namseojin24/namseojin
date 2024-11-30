@@ -120,43 +120,40 @@
         function generateResponse(input) {
             const normalizedInput = normalizeInput(input);
 
-            // 다양한 질문에 유연하게 응답하기 위한 처리
-            if (normalizedInput.includes("사랑")) {
-                return "사랑은 감정의 표현으로, 상대에 대한 애정과 헌신을 느끼는 것입니다. 당신은 사랑을 어떻게 정의하시나요?";
-            } else if (normalizedInput.includes("음악")) {
-                return "음악은 감정을 표현하는 방법이에요. 좋아하는 장르가 있으신가요?";
-            } else if (normalizedInput.includes("도움")) {
-                return "도움이 필요하시군요! 무엇을 도와드릴까요? 예를 들어, 기술적인 문제나 일반적인 질문에 대한 도움을 드릴 수 있어요.";
-            } else if (normalizedInput.includes("코딩")) {
-                return "코딩을 배우려면 HTML, CSS, JavaScript부터 시작해 보세요! 어떤 도움이 필요하신가요?";
-            } else if (normalizedInput.includes("색깔") || normalizedInput.includes("좋아하는 색")) {
-                return "모든 색깔이 각기 다른 매력을 가지고 있죠. 당신은 어떤 색을 좋아하시나요?";
-            } else if (normalizedInput.includes("음식")) {
-                return "음식에 대한 질문을 좋아하세요! 당신은 어떤 음식을 좋아하시나요?";
-            } else if (normalizedInput.includes("코딩 배우는 법")) {
-                return "코딩을 배우는 가장 좋은 방법은 실습입니다. 무료 자료로는 W3Schools와 MDN 웹 문서를 추천합니다.";
-            } else if (normalizedInput.includes("날씨")) {
-                return "날씨는 사람들의 기분에 큰 영향을 미쳐요. 오늘 날씨는 어떤가요?";
-            } else if (normalizedInput.includes("누구")) {
-                return "저는 남서진의 AI입니다. 질문에 답변하거나 도움을 드리는 것이 제 역할이에요!";
-            } else if (normalizedInput.includes("시간 관리")) {
-                return "시간 관리를 잘하려면 일정한 루틴을 만드는 것이 중요합니다. 우선순위를 정하고, 효율적으로 시간을 분배해 보세요!";
-            } else if (normalizedInput.includes("인생의 의미")) {
-                return "인생의 의미는 각자가 찾는 것이라 생각해요. 당신은 어떻게 생각하세요?";
-            } else if (normalizedInput.includes("오늘 기분")) {
-                return "오늘 기분은 어떠신가요? 기분이 좋은 날은 무엇을 하시나요?";
-            } else if (normalizedInput.includes("여행")) {
-                return "여행은 새로운 경험을 쌓을 수 있는 좋은 방법이죠. 좋아하는 여행지는 어디인가요?";
-            } else if (normalizedInput.includes("인공지능")) {
-                return "AI는 인간의 일부분을 대체할 수 있지만, 감정이나 창의력 등 인간만이 가진 고유의 특성을 대체할 수는 없습니다.";
-            } else if (normalizedInput.includes("기술")) {
-                return "기술은 빠르게 발전하고 있습니다. 인공지능, 블록체인, 5G와 같은 기술들은 앞으로 더욱 중요한 역할을 할 것입니다.";
+            // 대화형 질문과 다양한 표현 처리
+            if (normalizedInput.match(/사랑|애정|사랑이 뭐야|사랑이란/i)) {
+                return "사랑은 강한 애정과 헌신을 바탕으로 한 감정이에요. 당신은 사랑을 어떻게 정의하시나요?";
+            } else if (normalizedInput.match(/음악|노래|좋아하는 음악/i)) {
+                return "음악은 감정을 표현하는 좋은 방법이죠. 어떤 장르의 음악을 좋아하시나요?";
+            } else if (normalizedInput.match(/도움|도와줘|도움이 필요/i)) {
+                return "도움이 필요하신가요? 무엇을 도와드릴까요?";
+            } else if (normalizedInput.match(/코딩|프로그래밍|컴퓨터/i)) {
+                return "코딩은 창의적인 문제 해결 방법이죠. 어떤 언어를 배우고 싶으신가요?";
+            } else if (normalizedInput.match(/음식|맛있는 음식|좋아하는 음식/i)) {
+                return "맛있는 음식은 기분을 좋게 만들어주죠! 좋아하는 음식은 무엇인가요?";
+            } else if (normalizedInput.match(/시간|시간 관리|효율적인 시간/i)) {
+                return "효율적인 시간 관리는 중요해요. 어떤 방식으로 시간을 관리하고 있나요?";
+            } else if (normalizedInput.match(/오늘|기분|오늘 기분/i)) {
+                return "오늘 기분은 어떤가요? 기분이 좋은 날은 무엇을 하시나요?";
+            } else if (normalizedInput.match(/여행|여행지|가고 싶은 나라/i)) {
+                return "여행은 새로운 경험을 쌓을 수 있는 좋은 방법이에요. 어떤 나라에 가고 싶으신가요?";
+            } else if (normalizedInput.match(/인생|삶|인생의 의미/i)) {
+                return "인생의 의미는 개인마다 다를 수 있어요. 당신에게 인생이란 무엇인가요?";
+            } else if (normalizedInput.match(/날씨|오늘 날씨|날씨가 어때/i)) {
+                return "날씨가 사람의 기분에 영향을 미치죠. 오늘 날씨는 어떤가요?";
+            } else if (normalizedInput.match(/행복|행복이란|행복을 찾는/i)) {
+                return "행복은 작은 순간들에서 찾을 수 있어요. 당신에게 행복이란 무엇인가요?";
+            } else if (normalizedInput.match(/일|일상|일하는 것/i)) {
+                return "일은 중요한 일이죠. 어떤 일을 하고 계신가요?";
+            } else if (normalizedInput.match(/시간|시간표|할 일/i)) {
+                return "오늘 할 일이 많나요? 어떻게 일정을 관리하고 있나요?";
+            } else if (normalizedInput.match(/인공지능|AI|기계학습/i)) {
+                return "인공지능은 사람처럼 생각하고 배우는 기계를 만드는 기술이에요. AI에 대해 더 알고 싶으신가요?";
             } else {
-                return "좋은 질문이에요! 아직 이 주제에 대해 배우지 못했지만, 더 많은 질문을 해 주세요.";
+                return "좋은 질문이에요! 하지만 이 주제에 대해서는 아직 배우지 못했어요. 다른 질문을 해주세요!";
             }
         }
 
-        // 입력 값에서 불필요한 공백을 제거하고 소문자로 변환하여 정규화
         function normalizeInput(input) {
             return input.toLowerCase().replace(/\s+/g, ' ').trim(); // 공백 제거 및 소문자로 변환
         }
