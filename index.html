@@ -148,91 +148,17 @@
                 <li onclick="askQuestion('영화')">영화</li>
                 <li onclick="askQuestion('음악')">음악</li>
                 <li onclick="askQuestion('취미')">취미</li>
+                <li onclick="askQuestion('먹을 것')">먹을 것</li>
+                <li onclick="askQuestion('기술')">기술</li>
+                <li onclick="askQuestion('날씨')">날씨</li>
+                <li onclick="askQuestion('책')">책</li>
             </ul>
         </div>
 
         <div class="category-select">
             <label for="category">질문 카테고리:</label>
             <select id="category">
-                <option value="greeting">인사</option>
-                <option value="mood">기분</option>
-                <option value="time">시간</option>
-                <option value="plans">내일 계획</option>
-                <option value="games">게임</option>
-                <option value="movies">영화</option>
-                <option value="music">음악</option>
-                <option value="hobbies">취미</option>
-            </select>
-        </div>
-
-        <div class="chat-box" id="chat-box"></div>
-
-        <input type="text" id="user-input" class="user-input" placeholder="질문을 입력하세요...">
-        <button id="send-btn" class="send-btn">전송</button>
-    </div>
-
-    <footer>
-        <p>© 2024 남서진. 모든 권리 보유.</p>
-    </footer>
-
-    <script>
-        document.getElementById('send-btn').addEventListener('click', function() {
-            let userInput = document.getElementById('user-input').value;
-            if (userInput.trim() !== "") {
-                displayMessage(userInput, 'user');
-                getAIResponse(userInput);
-                document.getElementById('user-input').value = ''; // 입력란 비우기
-            }
-        });
-
-        function displayMessage(message, sender) {
-            let chatBox = document.getElementById('chat-box');
-            let newMessage = document.createElement('div');
-            newMessage.classList.add(sender);
-            newMessage.textContent = message;
-            chatBox.appendChild(newMessage);
-            chatBox.scrollTop = chatBox.scrollHeight; // 자동 스크롤
-        }
-
-        function getAIResponse(input) {
-            let response = "";
-
-            // '기분'에 대한 다양한 질문을 처리
-            if (/기분/.test(input)) {
-                const moods = [
-                    "저는 기분이 아주 좋아요! 😊",
-                    "기분이 최고예요!",
-                    "항상 기분이 좋아요!",
-                    "오늘도 행복한 하루입니다!"
-                ];
-                response = moods[Math.floor(Math.random() * moods.length)];
-            }
-            // '시간'에 대한 다양한 질문을 처리
-            else if (/시간/.test(input)) {
-                response = `현재 시간은 ${new Date().toLocaleTimeString()}입니다.`;
-            }
-            // '내일 계획'에 대한 질문을 처리
-            else if (/내일 계획/.test(input)) {
-                response = "내일 어떤 계획을 세우셨나요? 함께 고민해볼까요?";
-            }
-            // '게임'에 대한 질문을 처리
-            else if (/게임/.test(input)) {
-                response = "게임을 좋아하시나요? 어떤 게임을 즐기세요?";
-            }
-            // '영화'에 대한 질문을 처리
-            else if (/영화/.test(input)) {
-                response = "최근에 본 영화는 무엇인가요? 추천해 드릴 영화가 있어요!";
-            }
-            // '음악'에 대한 질문을 처리
-            else if (/음악/.test(input)) {
-                response = "어떤 음악 장르를 좋아하세요? 추천 곡을 알려드릴게요!";
-            }
-            // '취미'에 대한 질문을 처리
-            else if (/취미/.test(input)) {
-                response = "저는 여러 가지 취미를 좋아해요! 취미는 무엇인가요?";
-            }
-            else {
-                response = "저는 아직 그 뜻을 이해하지 못해요.";
+                <option value="greeting">인사</option요.";
             }
 
             displayMessage(response, 'ai');
