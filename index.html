@@ -138,7 +138,7 @@
 
     <div class="chat-container">
         <div id="faq">
-            <h3>남서진 ai에게 자주 묻는 질문</h3>
+            <h3>자주 묻는 질문</h3>
             <ul>
                 <li onclick="askQuestion('안녕하세요')">안녕하세요</li>
                 <li onclick="askQuestion('기분')">기분</li>
@@ -150,7 +150,6 @@
                 <li onclick="askQuestion('취미')">취미</li>
                 <li onclick="askQuestion('먹을 것')">먹을 것</li>
                 <li onclick="askQuestion('기술')">기술</li>
-                <li onclick="askQuestion('날씨')">날씨</li>
                 <li onclick="askQuestion('책')">책</li>
             </ul>
         </div>
@@ -158,13 +157,117 @@
         <div class="category-select">
             <label for="category">질문 카테고리:</label>
             <select id="category">
-                <option value="greeting">인사</option요.";
+                <option value="greeting">인사</option>
+                <option value="mood">기분</option>
+                <option value="time">시간</option>
+                <option value="plans">내일 계획</option>
+                <option value="games">게임</option>
+                <option value="movies">영화</option>
+                <option value="music">음악</option>
+                <option value="hobbies">취미</option>
+                <option value="food">먹을 것</option>
+                <option value="technology">기술</option>
+                <option value="books">책</option>
+                <option value="sports">스포츠</option>
+                <option value="travel">여행</option>
+                <option value="science">과학</option>
+                <option value="philosophy">철학</option>
+                <option value="politics">정치</option>
+                <option value="history">역사</option>
+            </select>
+        </div>
+
+        <div class="chat-box" id="chat-box"></div>
+
+        <input type="text" id="user-input" class="user-input" placeholder="질문을 입력하세요...">
+        <button id="send-btn" class="send-btn">전송</button>
+    </div>
+
+    <footer>
+        <p>© 2024 남서진. 모든 권리 보유.</p>
+    </footer>
+
+    <script>
+        document.getElementById('send-btn').addEventListener('click', function() {
+            let userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== "") {
+                displayMessage(userInput, 'user');
+                getAIResponse(userInput);
+                document.getElementById('user-input').value = ''; // 입력란 비우기
+            }
+        });
+
+        function displayMessage(message, sender) {
+            let chatBox = document.getElementById('chat-box');
+            let newMessage = document.createElement('div');
+            newMessage.classList.add(sender);
+            newMessage.textContent = message;
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight; // 자동 스크롤
+        }
+
+        function getAIResponse(input) {
+            let response = "";
+            // 선택된 카테고리 값 가져오기
+            let category = document.getElementById("category").value;
+
+            if (category === "greeting") {
+                response = "안녕하세요! 무엇을 도와드릴까요?";
+            }
+            // '기분'에 대한 질문
+            else if (category === "mood") {
+                const moods = [
+                    "저는 기분이 아주 좋아요! 😊",
+                    "기분이 최고예요!",
+                    "항상 기분이 좋아요!",
+                    "오늘도 행복한 하루입니다!"
+                ];
+                response = moods[Math.floor(Math.random() * moods.length)];
+            }
+            // '시간'에 대한 질문
+            else if (category === "time") {
+                response = `현재 시간은 ${new Date().toLocaleTimeString()}입니다.`;
+            }
+            // '내일 계획'에 대한 질문
+            else if (category === "plans") {
+                response = "내일 어떤 계획을 세우셨나요? 함께 고민해볼까요?";
+            }
+            // '게임'에 대한 질문
+            else if (category === "games") {
+                response = "게임을 좋아하시나요? 어떤 게임을 즐기세요?";
+            }
+            // '영화'에 대한 질문
+            else if (category === "movies") {
+                response = "최근에 본 영화는 무엇인가요? 추천해 드릴 영화가 있어요!";
+            }
+            // '음악'에 대한 질문
+            else if (category === "music") {
+                response = "어떤 음악 장르를 좋아하시나요? 클래식, 힙합, 재즈 등 여러 장르가 있어요!";
+            }
+            // '취미'에 대한 질문
+            else if (category === "hobbies") {
+                response = "취미가 무엇인가요? 함께 취미에 대해 이야기해봐요!";
+            }
+            // '먹을 것'에 대한 질문
+            else if (category === "food") {
+                response = "오늘은 무엇을 먹고 싶으신가요? 추천해드릴게요!";
+            }
+            // '기술'에 대한 질문
+            else if (category === "technology") {
+                response = "최신 기술에 대해 알고 싶으신가요? 어떤 기술이 궁금하세요?";
+            }
+            // '책'에 대한 질문
+            else if (category === "books") {
+                response = "최근 읽은 책이 있나요? 아니면 추천해 드릴 책이 있어요!";
+            }
+            // 그 외의 카테고리
+            else {
+                response = "저는 아직 그 질문에 대한 답을 준비 중입니다.";
             }
 
             displayMessage(response, 'ai');
         }
 
-        // 자주 묻는 질문을 클릭하면 해당 질문으로 답변을 받음
         function askQuestion(question) {
             displayMessage(question, 'user');
             getAIResponse(question);
