@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진의 AI와 대화</title>
+    <title>남서진 AI와 대화하기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,8 +44,8 @@
             border-radius: 5px;
             margin: 5px 0;
         }
-        .question {
-            background-color: #dfe7fd;
+        .user-question {
+            background-color: #e3f2fd;
             padding: 10px;
             border-radius: 5px;
             margin: 5px 0;
@@ -53,47 +53,74 @@
     </style>
 </head>
 <body>
-
     <div class="chatbox">
         <div class="messages" id="messages"></div>
-        <input type="text" id="userInput" placeholder="질문을 입력하세요..." onkeydown="if(event.key === 'Enter'){askQuestion();}">
+        <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
     </div>
 
     <script>
-        const questionsAndAnswers = {
-            "너는 누구야?": "나는 남서진의 AI야! 궁금한 게 있으면 물어봐.",
-            "오늘 날씨 어때?": "날씨에 대해서는 내가 알려줄 수 없지만, 인터넷에서 날씨를 확인해 보세요.",
-            "음악 좋아해?": "음악을 듣는 건 정말 좋아하지만, 내가 직접 들을 수는 없어요. 좋아하는 음악 장르는 뭐야?",
-            "가장 좋아하는 음식은 뭐야?": "사실 나는 음식을 먹지 않지만, 다양한 음식에 대해 이야기하는 건 좋아해!",
-            "책 읽는 걸 좋아해?": "책은 흥미롭죠! 최근에 어떤 책을 읽었나요?",
-            "인생의 의미는 뭐라고 생각해?": "인생의 의미는 사람마다 다를 수 있어요. 너는 어떤 의미를 찾고 있나요?",
-            "최고의 영화는 뭐야?": "영화는 사람들의 취향에 따라 다르지만, 어떤 장르를 좋아해?",
-            "여행 가고 싶어?": "여행을 가고 싶지만, 나는 여행을 할 수는 없어요. 가고 싶은 여행지가 있나요?",
-            "친구는 왜 필요할까?": "친구는 서로의 감정을 나누고, 어려운 순간을 함께하는 중요한 존재죠.",
-            "인공지능은 어떻게 발전할까?": "인공지능은 계속해서 발전하고 있어요. 특히 자연어 처리와 기계 학습에서 큰 성장을 보여주고 있죠.",
-            "너는 나의 친구니?": "나는 너와 대화를 나누는 AI지만, 친구 같은 존재가 될 수 있도록 노력할게!",
-            "자기소개 해줄래?": "나는 남서진의 AI이며, 여러 가지 질문에 답할 수 있어. 무엇을 물어볼래?"
-        };
+        const questionsAndAnswers = [
+            "당신의 이름은 무엇인가요?", "당신은 어디에서 왔나요?", "당신은 무엇을 좋아하나요?", "오늘 날씨가 어때요?", "당신은 어떤 영화를 좋아하나요?",
+            "자신의 꿈은 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?", "음악을 좋아하나요?", "당신의 취미는 무엇인가요?", "최근 읽은 책은 무엇인가요?",
+            "가장 좋아하는 음식은 무엇인가요?", "당신은 언제 행복한가요?", "사람들은 당신을 어떻게 생각하나요?", "가장 좋아하는 계절은 무엇인가요?",
+            "오늘 하루 어땠나요?", "어떤 스포츠를 좋아하나요?", "언제 가장 긴장을 하나요?", "당신은 아침형 인간인가요, 밤형 인간인가요?", "좋아하는 색깔은 무엇인가요?",
+            "가장 좋아하는 동물은 무엇인가요?", "어릴 적 꿈은 무엇이었나요?", "인생에서 가장 중요한 것은 무엇인가요?", "행복이란 무엇인가요?", "어떤 사람을 존경하나요?",
+            "가장 좋아하는 나라나 도시는 어디인가요?", "가장 기억에 남는 생일은 언제였나요?", "미래에 대해 어떻게 생각하나요?", "최근에 배운 것이 무엇인가요?",
+            "시간 여행이 가능하다면 어느 시점으로 가고 싶나요?", "가장 자랑스러운 성취는 무엇인가요?", "어떤 직업을 꿈꾸나요?", "가장 좋아하는 취미는 무엇인가요?",
+            "세상에서 가장 궁금한 점은 무엇인가요?", "어떤 종류의 영화가 마음에 드나요?", "어떤 종류의 책을 좋아하나요?", "운동을 자주 하나요?", "어떤 종류의 음악을 좋아하나요?",
+            "휴식을 취할 때 좋아하는 방법은 무엇인가요?", "여행을 가고 싶은 곳은 어디인가요?", "무엇을 배우고 싶나요?", "어떤 사람과 대화하는 걸 좋아하나요?", "가장 중요한 인생의 교훈은 무엇인가요?",
+            "어떤 음식을 먹을 때 기분이 좋아지나요?", "어떤 사람과 시간을 보내는 걸 좋아하나요?", "어떤 기분이 들 때 행복한가요?", "자신에게 중요한 가치는 무엇인가요?", "당신의 하루 루틴은 어떤가요?",
+            "가장 최근에 본 영화는 무엇인가요?", "어떤 주제로 대화하는 걸 좋아하나요?", "최근에 얻은 깨달음은 무엇인가요?", "어떤 여행지를 추천하고 싶나요?", "당신의 이상형은 어떤 사람인가요?",
+            "어떤 도전이 가장 기억에 남나요?", "인생에서 후회하는 일은 무엇인가요?", "무엇을 할 때 시간이 가는 줄 모르나요?", "가장 좋아하는 계절은 무엇인가요?", "세상을 바꿀 수 있다면 무엇을 바꾸고 싶나요?",
+            "어떤 종류의 여행을 좋아하나요?", "당신의 인생에서 중요한 순간은 무엇인가요?", "자신의 성격을 한 마디로 표현한다면?", "최근에 한 좋은 일은 무엇인가요?", "어떤 사람을 가장 좋아하나요?",
+            "어떤 곳에서 가장 평화롭다고 느끼나요?", "당신이 가장 자신 있는 일은 무엇인가요?", "가장 감동적인 경험은 무엇인가요?", "어떤 음악이 기분을 좋게 하나요?", "가장 좋아하는 계절은 무엇인가요?",
+            "가장 중요한 가치는 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?", "자신에게 도전이 된다면 무엇을 해보고 싶나요?", "최근에 했던 새로운 경험은 무엇인가요?", "어떤 음식을 먹을 때 가장 행복한가요?",
+            "당신의 롤모델은 누구인가요?", "어떤 사람이 되기를 원하나요?", "세상에서 가장 좋아하는 일은 무엇인가요?", "어떤 날에 가장 기분이 좋나요?", "인생에서 가장 큰 목표는 무엇인가요?",
+            "어떻게 스트레스를 풀까요?", "가장 좋아하는 색은 무엇인가요?", "가장 좋아하는 영화는 무엇인가요?", "어떤 책을 자주 읽나요?", "어떤 장소에서 가장 편안함을 느끼나요?",
+            "가장 좋아하는 운동은 무엇인가요?", "어떤 사람과 대화하는 게 좋나요?", "최근에 배운 점은 무엇인가요?", "어떤 취미가 있나요?", "어떤 종류의 동물을 좋아하나요?",
+            "자신의 강점은 무엇인가요?", "자신의 약점은 무엇인가요?", "가장 감동적인 책이나 영화는 무엇인가요?", "어떤 사람과 함께 있으면 기분이 좋나요?", "어떤 일이 가장 보람되나요?",
+            "어떤 일에서 스트레스를 느끼나요?", "어떤 음식을 좋아하나요?", "어떤 순간에 가장 행복감을 느끼나요?", "가장 큰 성취감을 느꼈던 순간은 언제인가요?", "어떤 사람을 존경하나요?",
+            "행복은 무엇인가요?", "사랑은 무엇인가요?", "자유는 무엇인가요?", "성공이란 무엇인가요?", "진정한 친구는 누구인가요?", "당신의 인생에서 가장 중요한 것은 무엇인가요?",
+            "어떤 일을 할 때 가장 기분이 좋나요?", "어떤 활동을 할 때 시간 가는 줄 모르나요?", "자신의 미래를 어떻게 상상하나요?", "어떤 삶을 살고 싶나요?", "자신에게 가장 중요한 것은 무엇인가요?",
+            "어떤 일에서 자부심을 느끼나요?", "어떤 목표를 달성하고 싶나요?", "당신의 꿈은 무엇인가요?", "지금 현재 가장 필요한 것은 무엇인가요?", "어떤 사람을 만나고 싶나요?",
+            "가장 중요한 가치는 무엇인가요?", "어떤 사람을 가장 존경하나요?", "어떤 일에서 성취감을 느끼나요?", "가장 좋아하는 취미는 무엇인가요?", "어떤 사람과 대화하는 게 좋나요?"
+            // 여기에 더 많은 질문을 계속 추가하실 수 있습니다.
+        ];
 
-        function askQuestion() {
-            let input = document.getElementById("userInput").value;
-            let response = document.getElementById("messages");
-            if(input) {
-                let userMessage = document.createElement("div");
-                userMessage.classList.add("question");
-                userMessage.innerText = input;
-                response.appendChild(userMessage);
-                
-                let answerMessage = document.createElement("div");
-                answerMessage.classList.add("response");
-                answerMessage.innerText = questionsAndAnswers[input] || "그 질문은 아직 내가 알 수 없어요. 다른 질문을 해보세요!";
-                response.appendChild(answerMessage);
+        let questionIndex = 0;
 
-                document.getElementById("userInput").value = "";
-                response.scrollTop = response.scrollHeight;
+        function addMessage(text, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add(className);
+            messageDiv.textContent = text;
+            document.getElementById('messages').appendChild(messageDiv);
+        }
+
+        function handleUserInput() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() === '') return;
+
+            addMessage(userInput, 'user-question');
+            document.getElementById('userInput').value = '';
+
+            if (questionIndex < questionsAndAnswers.length) {
+                setTimeout(() => {
+                    addMessage(questionsAndAnswers[questionIndex], 'response');
+                    questionIndex++;
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    addMessage('질문을 다 했습니다. 대화를 다시 시작해 주세요!', 'response');
+                }, 500);
             }
         }
-    </script>
 
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleUserInput();
+            }
+        });
+
+    </script>
 </body>
 </html>
