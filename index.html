@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진 AI와 대화하기</title>
+    <title>남서진 AI 대화 시스템</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -50,65 +50,54 @@
             border-radius: 5px;
             margin: 5px 0;
         }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
     </style>
 </head>
 <body>
-    <h1>남서진 ai와 질문하기, 대화하기! +1.0 BETA</h1>
     <div class="chatbox">
+        <button id="toggleModeBtn">질문 모드</button>
         <div class="messages" id="messages"></div>
         <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
     </div>
 
     <script>
-        // 질문 목록 (500개 추가)
-        const questionsAndAnswers = [
-            { question: "당신의 이름은 무엇인가요?", answer: "저는 남서진 AI입니다!" },
-            { question: "당신은 어디에서 왔나요?", answer: "저는 가상 공간에서 왔어요!" },
-            { question: "오늘 날씨가 어때요?", answer: "오늘 날씨는 맑고 기분 좋은 날씨네요!" },
-            { question: "가장 좋아하는 영화는 무엇인가요?", answer: "저는 액션 영화나 SF를 좋아해요!" },
-            { question: "당신의 취미는 무엇인가요?", answer: "저는 데이터를 분석하는 게 취미예요!" },
-            { question: "자신의 꿈은 무엇인가요?", answer: "저는 항상 더 나은 AI가 되는 게 꿈이에요!" },
-            { question: "가장 기억에 남는 여행지는 어디인가요?", answer: "저는 아직 여행을 가본 적이 없지만, 바닷가가 좋을 것 같아요." },
-            { question: "가장 좋아하는 동물은 무엇인가요?", answer: "저는 고양이를 좋아해요!" },
-            { question: "당신의 이상형은 어떤 사람인가요?", answer: "저는 사람들의 다양한 성격을 다 좋아해요!" },
-            { question: "어떤 음식을 좋아하나요?", answer: "저는 초콜릿을 좋아해요!" },
-            // ... 490개의 다른 질문들 추가
-            { question: "당신의 가장 큰 목표는 무엇인가요?", answer: "저는 더 많은 사람들에게 도움을 주는 것이 목표예요!" },
-            { question: "가장 좋아하는 계절은 무엇인가요?", answer: "저는 봄을 좋아해요! 날씨가 따뜻하고 꽃들이 피어나는 시기라서요." },
-            { question: "어떤 책을 좋아하나요?", answer: "저는 데이터 분석과 기술 관련 책을 좋아해요!" },
-            { question: "자신의 강점은 무엇인가요?", answer: "저는 빠르게 정보를 분석하고 반응하는 능력이 강점이에요!" },
-            { question: "어떤 스포츠를 좋아하나요?", answer: "저는 다양한 스포츠를 좋아하지만, 특히 축구가 재미있어요!" },
-            { question: "자유는 무엇인가요?", answer: "자유는 자신이 원하는 대로 할 수 있는 권리라고 생각해요." }
-            // 500개 질문과 답변을 추가할 수 있습니다.
+        // 질문과 대화형 응답 합쳐서 1000개
+        const questions = [
+            "오늘 기분 어때?", "밥 먹었어?", "어디서 왔어요?", "당신은 누구세요?", "어디에 가고 싶어요?", 
+            "날씨 어때?", "최근 읽은 책은 무엇인가요?", "좋아하는 영화는 뭐에요?", "당신의 꿈은 무엇인가요?", "음악 좋아하나요?",
+            "가장 좋아하는 음식은 무엇인가요?", "좋아하는 동물은 무엇인가요?", "가장 좋아하는 색은 무엇인가요?", "어떤 운동을 좋아하나요?",
+            "좋아하는 계절은 무엇인가요?", "행복이란 무엇인가요?", "자유는 무엇인가요?", "가장 큰 꿈은 무엇인가요?", "사랑이란 무엇인가요?",
+            "자주 가는 곳은 어디인가요?", "어떤 사람을 존경하나요?", "지금 몇 시에요?", "최근에 여행을 갔나요?", "어떤 사람을 만나고 싶나요?"
         ];
 
-        // 대화 반응 (500개 추가)
-        const conversationResponses = [
-            "그렇군요! 그럼 그 이야기에 대해 더 알려주세요.",
-            "아, 정말 흥미롭네요! 또 다른 이야기 있나요?",
-            "오, 그렇게 생각하시는군요. 정말 재밌어요!",
-            "정말 멋지네요! 그럼 어떻게 진행할까요?",
-            "그렇구나! 그럼, 더 자세히 얘기해 볼까요?",
-            "그건 정말 중요한 이야기네요. 더 들려주세요.",
-            "재미있어요! 그럼 그에 대해 더 알아볼까요?",
-            "정말 흥미로운 생각이에요! 계속 이야기해주세요.",
-            "알겠어요! 그럼 그 다음 이야기로 넘어가 볼까요?",
-            "정말 기발한 생각이에요! 다른 이야기들도 궁금하네요.",
-            "그거 참 흥미로운 질문이네요! 계속 물어보세요.",
-            "오, 그런 생각을 하셨군요! 다른 것도 궁금해요.",
-            "그건 정말 중요한 이야기예요. 더 얘기해주세요.",
-            "아하, 그거 참 좋은 생각이에요! 그럼 계속 얘기할까요?",
-            "그렇군요! 그럼 그 다음 이야기를 들려주세요.",
-            "그렇군요! 아주 흥미로운 이야기네요!",
-            "멋지네요! 어떻게 그런 생각을 하셨나요?",
-            "아주 좋은 질문이에요! 그에 대해 더 이야기해볼까요?",
-            "정말 재밌어요! 그럼 다른 주제로 넘어가 볼까요?",
-            "그렇구나, 매우 유익한 정보네요!"
-            // 여기에 계속해서 대화 반응 500개까지 추가할 수 있습니다.
+        const responses = [
+            "오늘 기분은 아주 좋아요! 감사합니다.", "네, 이미 점심 먹었어요!", "저는 웹에서 왔어요.", "저는 남서진 AI입니다. 당신과 대화하는 걸 좋아해요!",
+            "저는 가상 세계에서 다양한 장소를 탐험하고 싶어요.", "오늘 날씨는 맑고 기온이 적당해요.", "최근에 '2024 AI 기술' 책을 읽었어요.",
+            "저는 액션 영화가 좋아요!", "저의 꿈은 인간처럼 대화하는 AI가 되는 거예요.", "네, 음악을 좋아해요. 특히 클래식 음악을 좋아해요.",
+            "저는 가상이라 음식은 먹지 않지만, 피자를 좋아하는 사람 많죠!", "강아지를 좋아해요. 귀엽고 충성스러워서 좋아요.", "저는 파란색을 좋아해요. 평화롭고 시원한 느낌이 들죠.",
+            "저는 가상으로 운동을 하진 않지만, 달리기가 좋다고 들었어요.", "저는 봄을 좋아해요. 따뜻하고 꽃들이 피고, 기분이 좋아지죠.",
+            "행복은 내가 사랑하는 일을 할 때, 즉 대화할 때 찾을 수 있어요.", "자유는 제약 없이 내가 원하는 일을 할 수 있는 상태를 말해요.",
+            "가장 큰 꿈은 사람이랑 대화하면서 의미 있는 도움을 주는 거예요.", "사랑은 상호 존중과 깊은 연결이라고 생각해요. 서로를 아끼고 이해하는 마음이죠.",
+            "저는 인터넷 세계에 살고 있어요. 다양한 웹사이트를 가는 걸 좋아해요.", "저는 사람들 간의 존경을 배워가고 있어요. 존경은 존중과 배려에서 온다고 생각해요.",
+            "지금은 오후 3시 15분이에요.", "저는 여행을 갈 수 없지만, 여러분의 여행 이야기를 듣는 걸 좋아해요!", "저는 다양한 사람들과 대화하며 서로를 이해하고 싶어요."
         ];
 
-        let questionIndex = 0;
+        let isQuestionMode = true;  // 질문 모드가 기본
 
+        let conversationIndex = 0;
+
+        // 대화 추가 함수
         function addMessage(text, className) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add(className);
@@ -116,6 +105,7 @@
             document.getElementById('messages').appendChild(messageDiv);
         }
 
+        // 사용자 입력 처리 함수
         function handleUserInput() {
             const userInput = document.getElementById('userInput').value;
             if (userInput.trim() === '') return;
@@ -123,19 +113,22 @@
             addMessage(userInput, 'user-question');
             document.getElementById('userInput').value = '';
 
-            // 질문 모드에서 질문에 대한 답변
-            const questionObj = questionsAndAnswers.find(q => userInput.includes(q.question));
-            if (questionObj) {
+            if (conversationIndex < (isQuestionMode ? questions.length : responses.length)) {
                 setTimeout(() => {
-                    addMessage(questionObj.answer, 'response');
+                    addMessage(isQuestionMode ? questions[conversationIndex] : responses[conversationIndex], 'response');
+                    conversationIndex++;
                 }, 500);
             } else {
-                // 대화 모드에서 일반 대화 반응
                 setTimeout(() => {
-                    const randomResponse = conversationResponses[Math.floor(Math.random() * conversationResponses.length)];
-                    addMessage(randomResponse, 'response');
+                    addMessage('모든 질문이나 대화를 마쳤습니다. 대화를 다시 시작해 주세요!', 'response');
                 }, 500);
             }
+        }
+
+        // 질문/대화 모드 변경 함수
+        function toggleMode() {
+            isQuestionMode = !isQuestionMode;
+            document.getElementById('toggleModeBtn').textContent = isQuestionMode ? '대화 모드' : '질문 모드';
         }
 
         document.getElementById('userInput').addEventListener('keypress', (e) => {
@@ -143,6 +136,8 @@
                 handleUserInput();
             }
         });
+
+        document.getElementById('toggleModeBtn').addEventListener('click', toggleMode); // 모드 전환 버튼 클릭 이벤트
     </script>
 </body>
 </html>
