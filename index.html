@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진 AI 대화 시스템</title>
+    <title>남서진 AI와 대화하기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -50,55 +50,56 @@
             border-radius: 5px;
             margin: 5px 0;
         }
-        button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #6200ea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #3700b3;
-        }
     </style>
 </head>
 <body>
-    <h1>남서진의 ai와 함께 질문하기, 대화하기! +1.0 BETA</h1>
+    <h1>남서진의 aiㅘ 함꼐 대화하기, 질문하기! +1.0 BETA</h1>
     <div class="chatbox">
-        <button id="toggleModeBtn">질문 모드</button>
         <div class="messages" id="messages"></div>
         <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
     </div>
 
     <script>
-        // 질문과 대화형 응답 합쳐서 1000개
-        const questions = [
-            "오늘 기분 어때?", "밥 먹었어?", "어디서 왔어요?", "당신은 누구세요?", "어디에 가고 싶어요?", 
-            "날씨 어때?", "최근 읽은 책은 무엇인가요?", "좋아하는 영화는 뭐에요?", "당신의 꿈은 무엇인가요?", "음악 좋아하나요?",
-            "가장 좋아하는 음식은 무엇인가요?", "좋아하는 동물은 무엇인가요?", "가장 좋아하는 색은 무엇인가요?", "어떤 운동을 좋아하나요?",
-            "좋아하는 계절은 무엇인가요?", "행복이란 무엇인가요?", "자유는 무엇인가요?", "가장 큰 꿈은 무엇인가요?", "사랑이란 무엇인가요?",
-            "자주 가는 곳은 어디인가요?", "어떤 사람을 존경하나요?", "지금 몇 시에요?", "최근에 여행을 갔나요?", "어떤 사람을 만나고 싶나요?"
+        let isQuestionMode = false;  // 질문 모드 상태 (기본값은 false, 즉 대화형 모드)
+        let questionIndex = 0;  // 질문의 인덱스
+
+        const responses = {
+            "대화형으로 바꿔줘": "대화형 모드로 변경되었습니다! 이제 자유롭게 대화해 주세요.",
+            "질문형으로 바꿔줘": "질문형 모드로 변경되었습니다! 질문을 해 주세요."
+        };
+
+        const questionsAndAnswers = [
+            "당신의 이름은 무엇인가요?", "당신은 어디에서 왔나요?", "당신은 무엇을 좋아하나요?", "오늘 날씨가 어때요?", 
+            "당신은 어떤 영화를 좋아하나요?", "자신의 꿈은 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?",
+            "음악을 좋아하나요?", "당신의 취미는 무엇인가요?", "최근 읽은 책은 무엇인가요?", "가장 좋아하는 음식은 무엇인가요?",
+            "당신은 언제 행복한가요?", "사람들은 당신을 어떻게 생각하나요?", "가장 좋아하는 계절은 무엇인가요?",
+            "오늘 하루 어땠나요?", "어떤 스포츠를 좋아하나요?", "언제 가장 긴장을 하나요?", "당신은 아침형 인간인가요, 밤형 인간인가요?",
+            "좋아하는 색깔은 무엇인가요?", "가장 좋아하는 동물은 무엇인가요?", "어릴 적 꿈은 무엇이었나요?", "인생에서 가장 중요한 것은 무엇인가요?",
+            "행복이란 무엇인가요?", "어떤 사람을 존경하나요?", "가장 좋아하는 나라나 도시는 어디인가요?", "가장 기억에 남는 생일은 언제였나요?",
+            "미래에 대해 어떻게 생각하나요?", "최근에 배운 것이 무엇인가요?", "시간 여행이 가능하다면 어느 시점으로 가고 싶나요?", 
+            "가장 자랑스러운 성취는 무엇인가요?", "어떤 직업을 꿈꾸나요?", "가장 좋아하는 취미는 무엇인가요?", "세상에서 가장 궁금한 점은 무엇인가요?",
+            "어떤 종류의 영화가 마음에 드나요?", "어떤 종류의 책을 좋아하나요?", "운동을 자주 하나요?", "어떤 종류의 음악을 좋아하나요?",
+            "휴식을 취할 때 좋아하는 방법은 무엇인가요?", "여행을 가고 싶은 곳은 어디인가요?", "무엇을 배우고 싶나요?", 
+            "어떤 사람과 대화하는 걸 좋아하나요?", "가장 중요한 인생의 교훈은 무엇인가요?", "어떤 음식을 먹을 때 기분이 좋아지나요?",
+            "어떤 사람과 시간을 보내는 걸 좋아하나요?", "어떤 기분이 들 때 행복한가요?", "자신에게 중요한 가치는 무엇인가요?", "당신의 하루 루틴은 어떤가요?",
+            "가장 최근에 본 영화는 무엇인가요?", "어떤 주제로 대화하는 걸 좋아하나요?", "최근에 얻은 깨달음은 무엇인가요?", "어떤 여행지를 추천하고 싶나요?",
+            "당신의 이상형은 어떤 사람인가요?", "어떤 도전이 가장 기억에 남나요?", "인생에서 후회하는 일은 무엇인가요?", 
+            "무엇을 할 때 시간이 가는 줄 모르나요?", "세상을 바꿀 수 있다면 무엇을 바꾸고 싶나요?", "어떤 종류의 여행을 좋아하나요?",
+            "당신의 인생에서 중요한 순간은 무엇인가요?", "자신의 성격을 한 마디로 표현한다면?", "최근에 한 좋은 일은 무엇인가요?", 
+            "어떤 사람을 가장 좋아하나요?", "어떤 곳에서 가장 평화롭다고 느끼나요?", "당신이 가장 자신 있는 일은 무엇인가요?", 
+            "가장 감동적인 경험은 무엇인가요?", "어떤 음악이 기분을 좋게 하나요?", "가장 좋아하는 계절은 무엇인가요?",
+            "가장 중요한 가치는 무엇인가요?", "가장 기억에 남는 여행지는 어디인가요?", "자신에게 도전이 된다면 무엇을 해보고 싶나요?", 
+            "최근에 했던 새로운 경험은 무엇인가요?", "어떤 음식을 먹을 때 가장 행복한가요?", "당신의 롤모델은 누구인가요?",
+            "어떤 사람이 되기를 원하나요?", "세상에서 가장 좋아하는 일은 무엇인가요?", "어떤 날에 가장 기분이 좋나요?", 
+            "인생에서 가장 큰 목표는 무엇인가요?", "어떻게 스트레스를 풀까요?", "가장 좋아하는 색은 무엇인가요?", "가장 좋아하는 영화는 무엇인가요?",
+            "어떤 책을 자주 읽나요?", "어떤 장소에서 가장 편안함을 느끼나요?", "가장 좋아하는 운동은 무엇인가요?", "어떤 사람과 대화하는 게 좋나요?",
+            "최근에 배운 점은 무엇인가요?", "어떤 취미가 있나요?", "어떤 종류의 동물을 좋아하나요?", "자신의 강점은 무엇인가요?",
+            "자신의 약점은 무엇인가요?", "가장 감동적인 책이나 영화는 무엇인가요?", "어떤 사람과 함께 있으면 기분이 좋나요?", 
+            "어떤 일이 가장 보람되나요?", "어떤 일에서 스트레스를 느끼나요?", "어떤 음식을 좋아하나요?", "어떤 순간에 가장 행복감을 느끼나요?",
+            "가장 큰 성취감을 느꼈던 순간은 언제인가요?", "어떤 사람을 존경하나요?", "행복은 무엇인가요?", "사랑은 무엇인가요?", 
+            "자유는 무엇인가요?", "성공이란 무엇인가요?", "진정한 친구는 누구인가요?", "당신의 인생에서 가장 중요한 것은 무엇인가요?"
         ];
 
-        const responses = [
-            "오늘 기분은 아주 좋아요! 감사합니다.", "네, 이미 점심 먹었어요!", "저는 웹에서 왔어요.", "저는 남서진 AI입니다. 당신과 대화하는 걸 좋아해요!",
-            "저는 가상 세계에서 다양한 장소를 탐험하고 싶어요.", "오늘 날씨는 맑고 기온이 적당해요.", "최근에 '2024 AI 기술' 책을 읽었어요.",
-            "저는 액션 영화가 좋아요!", "저의 꿈은 인간처럼 대화하는 AI가 되는 거예요.", "네, 음악을 좋아해요. 특히 클래식 음악을 좋아해요.",
-            "저는 가상이라 음식은 먹지 않지만, 피자를 좋아하는 사람 많죠!", "강아지를 좋아해요. 귀엽고 충성스러워서 좋아요.", "저는 파란색을 좋아해요. 평화롭고 시원한 느낌이 들죠.",
-            "저는 가상으로 운동을 하진 않지만, 달리기가 좋다고 들었어요.", "저는 봄을 좋아해요. 따뜻하고 꽃들이 피고, 기분이 좋아지죠.",
-            "행복은 내가 사랑하는 일을 할 때, 즉 대화할 때 찾을 수 있어요.", "자유는 제약 없이 내가 원하는 일을 할 수 있는 상태를 말해요.",
-            "가장 큰 꿈은 사람이랑 대화하면서 의미 있는 도움을 주는 거예요.", "사랑은 상호 존중과 깊은 연결이라고 생각해요. 서로를 아끼고 이해하는 마음이죠.",
-            "저는 인터넷 세계에 살고 있어요. 다양한 웹사이트를 가는 걸 좋아해요.", "저는 사람들 간의 존경을 배워가고 있어요. 존경은 존중과 배려에서 온다고 생각해요.",
-            "지금은 오후 3시 15분이에요.", "저는 여행을 갈 수 없지만, 여러분의 여행 이야기를 듣는 걸 좋아해요!", "저는 다양한 사람들과 대화하며 서로를 이해하고 싶어요."
-        ];
-
-        let isQuestionMode = true;  // 질문 모드가 기본
-
-        let conversationIndex = 0;
-
-        // 대화 추가 함수
         function addMessage(text, className) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add(className);
@@ -106,7 +107,6 @@
             document.getElementById('messages').appendChild(messageDiv);
         }
 
-        // 사용자 입력 처리 함수
         function handleUserInput() {
             const userInput = document.getElementById('userInput').value;
             if (userInput.trim() === '') return;
@@ -114,22 +114,36 @@
             addMessage(userInput, 'user-question');
             document.getElementById('userInput').value = '';
 
-            if (conversationIndex < (isQuestionMode ? questions.length : responses.length)) {
+            if (responses[userInput]) {
+                addMessage(responses[userInput], 'response');  // '대화형' 또는 '질문형' 모드 변경 응답
+                if (userInput === "대화형으로 바꿔줘") {
+                    isQuestionMode = false;
+                } else if (userInput === "질문형으로 바꿔줘") {
+                    isQuestionMode = true;
+                }
+                return;
+            }
+
+            if (isQuestionMode) {
+                // 질문 모드인 경우, 사용자 입력에 대해 질문에 맞는 응답을 한다.
+                const questionAnswer = questionsAndAnswers[questionIndex];
                 setTimeout(() => {
-                    addMessage(isQuestionMode ? questions[conversationIndex] : responses[conversationIndex], 'response');
-                    conversationIndex++;
+                    addMessage(questionAnswer, 'response');
+                    questionIndex = (questionIndex + 1) % questionsAndAnswers.length;
                 }, 500);
             } else {
-                setTimeout(() => {
-                    addMessage('모든 질문이나 대화를 마쳤습니다. 대화를 다시 시작해 주세요!', 'response');
-                }, 500);
+                // 대화 모드인 경우, 자유로운 대화와 맞장구를 쳐준다.
+                const userMessage = userInput.toLowerCase();
+                if (userMessage.includes("어디") || userMessage.includes("어디서")) {
+                    addMessage('아, 당신은 ' + userInput + '에서 오셨군요! 멋지네요!', 'response');
+                } else if (userMessage.includes("좋아") || userMessage.includes("좋아해")) {
+                    addMessage('좋아요! 저도 그런 것들을 좋아해요!', 'response');
+                } else if (userMessage.includes("날씨")) {
+                    addMessage('오늘 날씨는 정말 좋아요! 밖에 나가서 산책해보세요!', 'response');
+                } else {
+                    addMessage('죄송해요. 아직 주인님이 저에게 그런 말은 학습시키지 못했어요요.', 'response');
+                }
             }
-        }
-
-        // 질문/대화 모드 변경 함수
-        function toggleMode() {
-            isQuestionMode = !isQuestionMode;
-            document.getElementById('toggleModeBtn').textContent = isQuestionMode ? '대화 모드' : '질문 모드';
         }
 
         document.getElementById('userInput').addEventListener('keypress', (e) => {
@@ -137,8 +151,6 @@
                 handleUserInput();
             }
         });
-
-        document.getElementById('toggleModeBtn').addEventListener('click', toggleMode); // 모드 전환 버튼 클릭 이벤트
     </script>
 </body>
 </html>
