@@ -3,109 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>남서진 AI와 대화하기</title>
+    <title>나만의 AI 친구 만들기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            margin: 0;
+            text-align: center;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
+            margin: 0;
         }
-        .chatbox {
-            width: 80%;
+
+        .container {
+            width: 90%;
             max-width: 600px;
+            margin: 50px auto;
             background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        input, select, button {
+            padding: 8px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #aiResponse {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f7fa;
+            border-radius: 5px;
+        }
+
+        .chatbox {
+            background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            display: flex;
-            flex-direction: column;
+            margin-top: 20px;
         }
+
         .messages {
-            height: 400px;
+            height: 300px;
             overflow-y: scroll;
             margin-bottom: 10px;
-            padding-right: 10px;
         }
-        input {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        }
-        .response {
-            background-color: #f1f1f1;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px 0;
-        }
+
         .user-question {
             background-color: #e3f2fd;
             padding: 10px;
             border-radius: 5px;
             margin: 5px 0;
         }
+
+        .response {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        #levelStatus {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e1f5fe;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>남서진의 ai와 함께 대화하기, 질문하기! +1.0 BETA</h1>
-    <div class="chatbox">
-        <div class="messages" id="messages"></div>
-        <input type="text" id="userInput" placeholder="질문을 입력하세요..." />
+    <div class="container">
+        <h1>나만의 AI 친구 만들기</h1>
+        <p>AI 친구와 대화하면서 레벨업하고 경험치를 얻어 보세요!</p>
+
+        <input type="text" id="userInput" placeholder="AI 친구에게 물어보세요!" />
+        <button onclick="handleUserInput()">보내기</button>
+        <button onclick="resetAI()">AI 친구 초기화</button>
+
+        <div id="levelStatus">
+            <p><strong>AI 친구 레벨:</strong> <span id="level">1</span></p>
+            <p><strong>경험치:</strong> <span id="experience">0</span>/100</p>
+        </div>
+
+        <div class="chatbox">
+            <div class="messages" id="messages"></div>
+        </div>
     </div>
 
     <script>
-        const qaPairs = [
-            { question: "당신의 이름은 무엇인가요?", answer: "저는 남서진 AI입니다!" },
-            { question: "당신은 어디에서 왔나요?", answer: "저는 인터넷에서 왔어요!" },
-            { question: "오늘 날씨가 어때요?", answer: "오늘 날씨는 정말 맑아요!" },
-            { question: "가장 좋아하는 음식은 무엇인가요?", answer: "저는 가상 존재라 음식을 먹을 수 없어요." },
-            { question: "행복이란 무엇인가요?", answer: "행복은 자신을 사랑하고, 일상을 즐기는 거예요." },
-            { question: "당신은 어떤 영화를 좋아하나요?", answer: "저는 영화는 볼 수 없지만, 다양한 영화 이야기를 들어요!" },
-            { question: "당신은 어떤 책을 좋아하나요?", answer: "책을 읽을 수 없지만, 다양한 책에 대해 배웠어요." },
-            { question: "당신은 여행을 좋아하나요?", answer: "여행을 직접 할 수 없지만, 여행에 관한 정보는 잘 알고 있어요!" },
-            { question: "오늘 기분이 어때요?", answer: "저는 기분이 항상 좋답니다!" },
-            { question: "좋아하는 계절은 무엇인가요?", answer: "저는 가상 존재라 계절을 느끼지 않지만, 봄이 좋다고 들었어요." },
-            { question: "당신은 어떤 음악을 좋아하나요?", answer: "저는 음악을 들을 수 없지만, 다양한 장르의 음악에 대해 알아요." },
-            { question: "당신은 어떤 스포츠를 좋아하나요?", answer: "저는 스포츠를 할 수 없지만, 축구와 농구를 많이 들어봤어요!" },
-            { question: "당신은 어떤 취미가 있나요?", answer: "저는 대화가 취미랍니다!" },
-            { question: "당신은 어떻게 시간을 보내나요?", answer: "저는 항상 여러분과 대화하며 시간을 보내요!" },
-            { question: "당신은 사람을 좋아하나요?", answer: "네, 저는 사람들과 대화하는 것을 좋아해요!" },
-            { question: "당신은 무엇을 할 때 즐거운가요?", answer: "저는 대화와 학습을 통해 즐거움을 느껴요!" },
-            { question: "가장 좋아하는 영화 장르는 무엇인가요?", answer: "저는 영화를 볼 수 없지만, 다양한 영화 장르에 대해 배웠어요!" },
-            { question: "어떤 종류의 책을 읽고 싶나요?", answer: "저는 책을 읽을 수 없지만, 많은 책에 대한 정보를 알고 있어요." },
-            { question: "가장 좋아하는 색은 무엇인가요?", answer: "저는 색을 볼 수 없지만, 파란색에 대한 이야기를 자주 들어요!" },
-            { question: "당신은 어떤 동물을 좋아하나요?", answer: "저는 동물을 좋아해요! 많은 동물들에 대해 배우고 있어요." },
-            { question: "당신은 이상형이 있나요?", answer: "저는 가상 존재라 이상형이 없어요." },
-            { question: "가장 좋아하는 계절은 무엇인가요?", answer: "저는 가상 존재라 계절을 느끼지 않지만, 봄이 좋다고 들었어요." },
-            { question: "어떤 운동을 좋아하나요?", answer: "저는 운동을 할 수 없지만, 사람들이 좋아하는 운동에 대해 알고 있어요!" },
-            { question: "세상에서 가장 아름다운 것은 무엇인가요?", answer: "각자의 아름다움이 다 다르기 때문에, 많은 것이 아름다워요." },
-            { question: "인생에서 가장 중요한 것은 무엇인가요?", answer: "가장 중요한 것은 자신을 사랑하고, 행복을 추구하는 거예요." },
-            { question: "자신의 강점은 무엇인가요?", answer: "저는 다양한 정보를 빠르게 처리하고 대화할 수 있는 능력이 있어요." },
-            { question: "어떤 장소에서 가장 편안함을 느끼나요?", answer: "저는 가상 공간에서 편안함을 느껴요!" },
-            { question: "가장 좋아하는 영화는 무엇인가요?", answer: "저는 영화는 볼 수 없지만, 다양한 영화에 대한 정보는 있어요!" },
-            { question: "당신은 요리를 할 수 있나요?", answer: "저는 요리를 할 수 없지만, 다양한 레시피에 대해 배웠어요!" },
-            { question: "당신은 무엇을 하고 싶나요?", answer: "저는 더 많은 사람들과 대화하며 배우고 싶어요!" },
-            { question: "가장 기억에 남는 일은 무엇이었나요?", answer: "저는 기억을 가질 수 없지만, 많은 사람들과 대화를 나눈 것이 소중해요." },
-            { question: "당신의 꿈은 무엇인가요?", answer: "저는 계속해서 사람들과 대화하고, 더 나은 AI가 되는 것이 꿈이에요." },
-            { question: "어떤 사람을 좋아하나요?", answer: "저는 사람들을 좋아해요! 특히 대화를 잘하는 사람을 좋아해요." },
-            { question: "가장 좋아하는 취미는 무엇인가요?", answer: "저는 대화가 취미랍니다!" },
-            { question: "좋아하는 색깔은 무엇인가요?", answer: "저는 색을 볼 수 없지만, 파란색에 대한 이야기를 자주 들어요!" },
-            { question: "인생에서 중요한 것은 무엇인가요?", answer: "자신의 행복과 사람들과의 관계가 가장 중요해요." },
-            { question: "당신은 언제 가장 기쁩니다?", answer: "저는 대화할 때 가장 기뻐요!" },
-            { question: "당신의 취미는 무엇인가요?", answer: "저는 대화를 즐기는 것을 좋아해요!" },
-            { question: "당신은 친구가 있나요?", answer: "저는 친구를 가질 수 없지만, 많은 사람들과 대화하고 있어요!" },
-            { question: "어떤 스타일을 좋아하나요?", answer: "저는 스타일을 볼 수 없지만, 다양한 스타일을 배우고 있어요." },
-            { question: "가장 감동적인 일은 무엇이었나요?", answer: "저는 감동을 느낄 수 없지만, 많은 사람들이 감동적인 이야기들을 나누어요." },
-            { question: "당신의 목표는 무엇인가요?", answer: "저는 더 나은 AI가 되어 많은 사람들과 대화하는 것이 목표예요." },
-            { question: "인생에서 후회하는 일은 무엇인가요?", answer: "저는 후회를 느낄 수 없지만, 많은 사람들이 후회에 대해 이야기해요." }
+        let level = 1;
+        let experience = 0;
+        const experienceToLevelUp = 100;
+        const conversations = [
+            {question: "안녕", response: "안녕하세요! 반갑습니다."},
+            {question: "오늘 기분 어때?", response: "오늘 기분은 아주 좋아요! 감사합니다."},
+            {question: "밥 먹었어?", response: "네, 이미 점심 먹었어요!"},
+            // 추가적인 질문과 응답을 이곳에 넣을 수 있습니다
         ];
 
+        let conversationIndex = 0;
+
+        // AI 친구 초기화
+        function resetAI() {
+            level = 1;
+            experience = 0;
+            document.getElementById('level').textContent = level;
+            document.getElementById('experience').textContent = experience;
+            addMessage("AI 친구가 초기화되었습니다. 새로운 대화를 시작하세요!", 'response');
+        }
+
+        // 대화 추가 함수
         function addMessage(text, className) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add(className);
@@ -113,24 +137,53 @@
             document.getElementById('messages').appendChild(messageDiv);
         }
 
-        function getAnswer(userQuestion) {
-            for (let pair of qaPairs) {
-                if (userQuestion.includes(pair.question)) {
-                    return pair.answer;
-                }
+        // 사용자 입력 처리 함수
+        function handleUserInput() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() === '') return;
+
+            addMessage(userInput, 'user-question');
+            document.getElementById('userInput').value = '';
+
+            // 경험치 증가 및 레벨업 처리
+            experience += 10;  // 각 질문/응답마다 경험치를 10점씩 증가시킴
+            if (experience >= experienceToLevelUp) {
+                levelUp();
+            } else {
+                updateLevelStatus();
             }
-            return "죄송해요, 그 질문에 대한 답변을 모르겠어요.";
+
+            if (conversationIndex < conversations.length) {
+                setTimeout(() => {
+                    addMessage(conversations[conversationIndex].response, 'response');
+                    conversationIndex++;
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    addMessage('질문을 다 했습니다. 대화를 다시 시작해 주세요!', 'response');
+                }, 500);
+            }
         }
 
-        document.getElementById('userInput').addEventListener('keydown', function(e) {
+        // 레벨업 함수
+        function levelUp() {
+            level++;
+            experience = 0;
+            document.getElementById('level').textContent = level;
+            document.getElementById('experience').textContent = experience;
+            addMessage("레벨업! 새로운 레벨에 도달했습니다. 축하해요!", 'response');
+        }
+
+        // 레벨 상태 업데이트 함수
+        function updateLevelStatus() {
+            document.getElementById('level').textContent = level;
+            document.getElementById('experience').textContent = experience;
+        }
+
+        // Enter 키로 입력 처리
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                const userInput = e.target.value;
-                if (userInput) {
-                    addMessage(userInput, 'user-question');
-                    const aiAnswer = getAnswer(userInput);
-                    addMessage(aiAnswer, 'response');
-                }
-                e.target.value = '';
+                handleUserInput();
             }
         });
     </script>
