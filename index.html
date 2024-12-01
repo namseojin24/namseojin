@@ -91,7 +91,15 @@
 <body>
     <div class="container">
         <h1>나만의 AI 친구 만들기</h1>
-        <p>AI 친구와 대화하면서 레벨업하고 경험치를 얻어 보세요!</p>
+        <p>AI 친구의 성격을 선택하고 대화를 시작해 보세요!</p>
+
+        <!-- 성격 선택 -->
+        <select id="personalitySelect">
+            <option value="kind">친절한</option>
+            <option value="humorous">유머 있는</option>
+            <option value="calm">차분한</option>
+        </select>
+        <button onclick="setPersonality()">성격 선택</button>
 
         <input type="text" id="userInput" placeholder="AI 친구에게 물어보세요!" />
         <button onclick="handleUserInput()">보내기</button>
@@ -111,6 +119,7 @@
         let level = 1;
         let experience = 0;
         const experienceToLevelUp = 100;
+        let personality = "kind";  // 기본 성격은 '친절한'
         const conversations = [
             {question: "안녕", response: "안녕하세요! 반갑습니다."},
             {question: "오늘 기분 어때?", response: "오늘 기분은 아주 좋아요! 감사합니다."},
@@ -127,6 +136,12 @@
             document.getElementById('level').textContent = level;
             document.getElementById('experience').textContent = experience;
             addMessage("AI 친구가 초기화되었습니다. 새로운 대화를 시작하세요!", 'response');
+        }
+
+        // 성격 설정 함수
+        function setPersonality() {
+            personality = document.getElementById('personalitySelect').value;
+            addMessage(`AI 친구의 성격이 '${personality}'로 설정되었습니다!`, 'response');
         }
 
         // 대화 추가 함수
@@ -155,7 +170,9 @@
 
             if (conversationIndex < conversations.length) {
                 setTimeout(() => {
-                    addMessage(conversations[conversationIndex].response, 'response');
+                    let aiResponse = conversations[conversationIndex].response;
+                    aiResponse = getPersonalityResponse(aiResponse);
+                    addMessage(aiResponse, 'response');
                     conversationIndex++;
                 }, 500);
             } else {
@@ -178,6 +195,20 @@
         function updateLevelStatus() {
             document.getElementById('level').textContent = level;
             document.getElementById('experience').textContent = experience;
+        }
+
+        // 성격에 맞는 응답 스타일을 적용하는 함수
+        function getPersonalityResponse(response) {
+            switch (personality) {
+                case "kind":
+                    return "친절하게: " + response;
+                case "humorous":
+                    return "유머 있게: " + response + " 하하!";
+                case "calm":
+                    return "차분하게: " + response;
+                default:
+                    return response;
+            }
         }
 
         // Enter 키로 입력 처리
