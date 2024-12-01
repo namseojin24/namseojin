@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나만의 AI 친구 만들기</title>
+    <title>나만의 AI 친구</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             text-align: center;
-            padding: 0;
             margin: 0;
+            padding: 0;
         }
 
         .container {
-            width: 90%;
             max-width: 600px;
-            margin: 50px auto;
+            margin: 20px auto;
             background-color: white;
             padding: 20px;
             border-radius: 10px;
@@ -28,9 +27,9 @@
         }
 
         input, select, button {
-            padding: 8px;
-            margin: 10px 0;
             width: 100%;
+            padding: 10px;
+            margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
@@ -45,44 +44,33 @@
             background-color: #45a049;
         }
 
-        #aiResponse {
+        .chatbox {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #e3f2fd;
+        }
+
+        .ai-message {
+            background-color: #f1f1f1;
+        }
+
+        .status {
             margin-top: 20px;
             padding: 15px;
-            background-color: #e0f7fa;
-            border-radius: 5px;
-        }
-
-        .chatbox {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .messages {
-            height: 300px;
-            overflow-y: scroll;
-            margin-bottom: 10px;
-        }
-
-        .user-question {
-            background-color: #e3f2fd;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px 0;
-        }
-
-        .response {
-            background-color: #f1f1f1;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px 0;
-        }
-
-        #levelStatus {
-            margin-top: 20px;
-            padding: 10px;
             background-color: #e1f5fe;
             border-radius: 5px;
         }
@@ -90,133 +78,128 @@
 </head>
 <body>
     <div class="container">
-        <h1>나만의 AI 친구 만들기</h1>
-        <p>AI 친구의 성격을 선택하고 대화를 시작해 보세요!</p>
+        <h1>나만의 AI 친구</h1>
+        <p>성격과 이름을 설정하고, AI 친구와 대화해 보세요!</p>
 
-        <!-- 성격 선택 -->
+        <!-- 사용자 설정 -->
+        <input type="text" id="aiName" placeholder="AI 친구의 이름을 입력하세요" />
         <select id="personalitySelect">
             <option value="kind">친절한</option>
             <option value="humorous">유머 있는</option>
             <option value="calm">차분한</option>
+            <option value="energetic">에너지 넘치는</option>
+            <option value="philosophical">철학적인</option>
         </select>
-        <button onclick="setPersonality()">성격 선택</button>
+        <button onclick="initializeAI()">설정 완료</button>
 
-        <input type="text" id="userInput" placeholder="AI 친구에게 물어보세요!" />
+        <!-- 입력 필드 -->
+        <input type="text" id="userInput" placeholder="AI 친구에게 물어보세요" />
         <button onclick="handleUserInput()">보내기</button>
-        <button onclick="resetAI()">AI 친구 초기화</button>
+        <button onclick="resetAI()">초기화</button>
 
-        <div id="levelStatus">
+        <!-- 상태 표시 -->
+        <div class="status">
             <p><strong>AI 친구 레벨:</strong> <span id="level">1</span></p>
             <p><strong>경험치:</strong> <span id="experience">0</span>/100</p>
         </div>
 
-        <div class="chatbox">
-            <div class="messages" id="messages"></div>
-        </div>
+        <!-- 채팅 박스 -->
+        <div class="chatbox" id="chatbox"></div>
     </div>
 
     <script>
+        let aiName = "AI 친구";
+        let personality = "kind";
         let level = 1;
         let experience = 0;
         const experienceToLevelUp = 100;
-        let personality = "kind";  // 기본 성격은 '친절한'
+
+        // 대화 저장
         const conversations = [
             {question: "안녕", response: "안녕하세요! 반갑습니다."},
-            {question: "오늘 기분 어때?", response: "오늘 기분은 아주 좋아요! 감사합니다."},
-            {question: "밥 먹었어?", response: "네, 이미 점심 먹었어요!"},
-            // 추가적인 질문과 응답을 이곳에 넣을 수 있습니다
+            {question: "오늘 기분 어때?", response: "기분이 정말 좋아요! 감사합니다."},
+            {question: "너는 누구야?", response: "저는 AI 친구예요. 당신과 대화하는 걸 좋아해요!"},
         ];
 
         let conversationIndex = 0;
 
-        // AI 친구 초기화
+        function initializeAI() {
+            aiName = document.getElementById('aiName').value || "AI 친구";
+            personality = document.getElementById('personalitySelect').value;
+            addMessage(`안녕하세요! 저는 ${aiName}입니다. ${getPersonalityStyle("성격을 반영해 대화를 진행하겠습니다.")}`, "ai-message");
+        }
+
         function resetAI() {
             level = 1;
             experience = 0;
-            document.getElementById('level').textContent = level;
-            document.getElementById('experience').textContent = experience;
-            addMessage("AI 친구가 초기화되었습니다. 새로운 대화를 시작하세요!", 'response');
+            updateStatus();
+            addMessage(`${aiName}가 초기화되었습니다. 다시 설정해주세요!`, "ai-message");
         }
 
-        // 성격 설정 함수
-        function setPersonality() {
-            personality = document.getElementById('personalitySelect').value;
-            addMessage(`AI 친구의 성격이 '${personality}'로 설정되었습니다!`, 'response');
-        }
-
-        // 대화 추가 함수
         function addMessage(text, className) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add(className);
+            const chatbox = document.getElementById("chatbox");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${className}`;
             messageDiv.textContent = text;
-            document.getElementById('messages').appendChild(messageDiv);
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
         }
 
-        // 사용자 입력 처리 함수
         function handleUserInput() {
-            const userInput = document.getElementById('userInput').value;
-            if (userInput.trim() === '') return;
+            const userInput = document.getElementById("userInput").value.trim();
+            if (!userInput) return;
 
-            addMessage(userInput, 'user-question');
-            document.getElementById('userInput').value = '';
+            addMessage(userInput, "user-message");
+            document.getElementById("userInput").value = "";
 
-            // 경험치 증가 및 레벨업 처리
-            experience += 10;  // 각 질문/응답마다 경험치를 10점씩 증가시킴
+            // 경험치 추가 및 레벨업 확인
+            experience += 10;
             if (experience >= experienceToLevelUp) {
                 levelUp();
             } else {
-                updateLevelStatus();
+                updateStatus();
             }
 
-            if (conversationIndex < conversations.length) {
-                setTimeout(() => {
-                    let aiResponse = conversations[conversationIndex].response;
-                    aiResponse = getPersonalityResponse(aiResponse);
-                    addMessage(aiResponse, 'response');
+            // AI 응답
+            setTimeout(() => {
+                if (conversationIndex < conversations.length) {
+                    const response = conversations[conversationIndex].response;
+                    addMessage(getPersonalityStyle(response), "ai-message");
                     conversationIndex++;
-                }, 500);
-            } else {
-                setTimeout(() => {
-                    addMessage('질문을 다 했습니다. 대화를 다시 시작해 주세요!', 'response');
-                }, 500);
-            }
+                } else {
+                    addMessage(getPersonalityStyle("더 이상 준비된 응답이 없습니다. 다음 대화를 준비할게요!"), "ai-message");
+                }
+            }, 500);
         }
 
-        // 레벨업 함수
         function levelUp() {
             level++;
             experience = 0;
-            document.getElementById('level').textContent = level;
-            document.getElementById('experience').textContent = experience;
-            addMessage("레벨업! 새로운 레벨에 도달했습니다. 축하해요!", 'response');
+            updateStatus();
+            addMessage(`${aiName}의 레벨이 ${level}로 올랐습니다! 축하해요!`, "ai-message");
         }
 
-        // 레벨 상태 업데이트 함수
-        function updateLevelStatus() {
-            document.getElementById('level').textContent = level;
-            document.getElementById('experience').textContent = experience;
+        function updateStatus() {
+            document.getElementById("level").textContent = level;
+            document.getElementById("experience").textContent = experience;
         }
 
-        // 성격에 맞는 응답 스타일을 적용하는 함수
-        function getPersonalityResponse(response) {
+        function getPersonalityStyle(response) {
             switch (personality) {
                 case "kind":
-                    return "친절하게: " + response;
+                    return `😊 [친절하게]: ${response}`;
                 case "humorous":
-                    return "유머 있게: " + response + " 하하!";
+                    return `😂 [유머 있게]: ${response}`;
                 case "calm":
-                    return "차분하게: " + response;
+                    return `😌 [차분하게]: ${response}`;
+                case "energetic":
+                    return `⚡ [에너지 넘치게]: ${response}!`;
+                case "philosophical":
+                    return `🧐 [철학적으로]: ${response}. 깊게 생각해봐요!`;
                 default:
                     return response;
             }
         }
-
-        // Enter 키로 입력 처리
-        document.getElementById('userInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleUserInput();
-            }
-        });
     </script>
 </body>
 </html>
