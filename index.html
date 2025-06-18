@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>나만의 AI 친구</title>
     <style>
         body {
@@ -77,129 +77,132 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>나만의 AI 친구(-남서진-)</h1>
-        <p>성격과 이름을 설정하고, AI 친구와 대화해 보세요!</p>
+<div class="container">
+    <h1>나만의 AI 친구(-남서진-)</h1>
+    <p>성격과 이름을 설정하고, AI 친구와 대화해 보세요!</p>
 
-        <!-- 사용자 설정 -->
-        <input type="text" id="aiName" placeholder="AI 친구의 이름을 입력하세요" />
-        <select id="personalitySelect">
-            <option value="kind">친절한</option>
-            <option value="humorous">유머 있는</option>
-            <option value="calm">차분한</option>
-            <option value="energetic">에너지 넘치는</option>
-            <option value="philosophical">철학적인</option>
-        </select>
-        <button onclick="initializeAI()">설정 완료</button>
+    <input type="text" id="aiName" placeholder="AI 친구의 이름을 입력하세요"/>
+    <select id="personalitySelect">
+        <option value="kind">친절한</option>
+        <option value="humorous">유머 있는</option>
+        <option value="calm">차분한</option>
+        <option value="energetic">에너지 넘치는</option>
+        <option value="philosophical">철학적인</option>
+    </select>
+    <button onclick="initializeAI()">설정 완료</button>
 
-        <!-- 입력 필드 -->
-        <input type="text" id="userInput" placeholder="AI 친구에게 물어보세요" />
-        <button onclick="handleUserInput()">보내기</button>
-        <button onclick="resetAI()">초기화</button>
+    <input type="text" id="userInput" placeholder="AI 친구에게 물어보세요"/>
+    <button onclick="handleUserInput()">보내기</button>
+    <button onclick="resetAI()">초기화</button>
 
-        <!-- 상태 표시 -->
-        <div class="status">
-            <p><strong>AI 친구 레벨:</strong> <span id="level">1</span></p>
-            <p><strong>경험치:</strong> <span id="experience">0</span>/100</p>
-        </div>
-
-        <!-- 채팅 박스 -->
-        <div class="chatbox" id="chatbox"></div>
+    <div class="status">
+        <p><strong>AI 친구 레벨:</strong> <span id="level">1</span></p>
+        <p><strong>경험치:</strong> <span id="experience">0</span>/100</p>
     </div>
 
-    <script>
-        let aiName = "AI 친구";
-        let personality = "kind";
-        let level = 1;
-        let experience = 0;
-        const experienceToLevelUp = 100;
+    <div class="chatbox" id="chatbox"></div>
+</div>
 
-        // 대화 저장
-        const conversations = [
-            {question: "안녕", response: "안녕하세요! 반갑습니다."},
-            {question: "오늘 기분 어때?", response: "기분이 정말 좋아요! 감사합니다."},
-            {question: "너는 누구야?", response: "남서진의 부하랍니다!"},
+<script>
+    let aiName = "AI 친구";
+    let personality = "kind";
+    let level = 1;
+    let experience = 0;
+    const experienceToLevelUp = 100;
+
+    function initializeAI() {
+        aiName = document.getElementById('aiName').value || "AI 친구";
+        personality = document.getElementById('personalitySelect').value;
+        addMessage(`안녕하세요! 저는 ${aiName}입니다. ${getPersonalityStyle("성격을 반영해 대화를 진행하겠습니다.")}`, "ai-message");
+    }
+
+    function resetAI() {
+        level = 1;
+        experience = 0;
+        updateStatus();
+        addMessage(`${aiName}가 초기화되었습니다. 다시 설정해주세요!`, "ai-message");
+    }
+
+    function addMessage(text, className) {
+        const chatbox = document.getElementById("chatbox");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${className}`;
+        messageDiv.textContent = text;
+        chatbox.appendChild(messageDiv);
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    async function handleUserInput() {
+        const userInput = document.getElementById("userInput").value.trim();
+        if (!userInput) return;
+
+        addMessage(userInput, "user-message");
+        document.getElementById("userInput").value = "";
+
+        experience += 10;
+        if (experience >= experienceToLevelUp) {
+            levelUp();
+        } else {
+            updateStatus();
+        }
+
+        const response = await getAIResponse(userInput);
+        addMessage(getPersonalityStyle(response), "ai-message");
+    }
+
+    function levelUp() {
+        level++;
+        experience = 0;
+        updateStatus();
+        addMessage(`${aiName}의 레벨이 ${level}로 올랐습니다! 축하해요!`, "ai-message");
+    }
+
+    function updateStatus() {
+        document.getElementById("level").textContent = level;
+        document.getElementById("experience").textContent = experience;
+    }
+
+    function getPersonalityStyle(response) {
+        switch (personality) {
+            case "kind":
+                return `😊 [친절하게]: ${response}`;
+            case "humorous":
+                return `😂 [유머 있게]: ${response}`;
+            case "calm":
+                return `😌 [차분하게]: ${response}`;
+            case "energetic":
+                return `⚡ [에너지 넘치게]: ${response}!`;
+            case "philosophical":
+                return `🧐 [철학적으로]: ${response}. 깊게 생각해봐요!`;
+            default:
+                return response;
+        }
+    }
+
+    async function getAIResponse(userInput) {
+        const apiKey = "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"; // 여기 본인의 API 키를 입력하세요
+        const endpoint = "https://api.openai.com/v1/chat/completions";
+
+        const messages = [
+            { role: "system", content: `너는 ${personality} 성격을 가진 AI 친구야. 이름은 ${aiName}이야. 사용자와 재미있고 따뜻하게 대화해줘.` },
+            { role: "user", content: userInput }
         ];
 
-        let conversationIndex = 0;
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: messages
+            })
+        });
 
-        function initializeAI() {
-            aiName = document.getElementById('aiName').value || "AI 친구";
-            personality = document.getElementById('personalitySelect').value;
-            addMessage(`안녕하세요! 저는 ${aiName}입니다. ${getPersonalityStyle("성격을 반영해 대화를 진행하겠습니다.")}`, "ai-message");
-        }
-
-        function resetAI() {
-            level = 1;
-            experience = 0;
-            updateStatus();
-            addMessage(`${aiName}가 초기화되었습니다. 다시 설정해주세요!`, "ai-message");
-        }
-
-        function addMessage(text, className) {
-            const chatbox = document.getElementById("chatbox");
-            const messageDiv = document.createElement("div");
-            messageDiv.className = `message ${className}`;
-            messageDiv.textContent = text;
-            chatbox.appendChild(messageDiv);
-            chatbox.scrollTop = chatbox.scrollHeight;
-        }
-
-        function handleUserInput() {
-            const userInput = document.getElementById("userInput").value.trim();
-            if (!userInput) return;
-
-            addMessage(userInput, "user-message");
-            document.getElementById("userInput").value = "";
-
-            // 경험치 추가 및 레벨업 확인
-            experience += 10;
-            if (experience >= experienceToLevelUp) {
-                levelUp();
-            } else {
-                updateStatus();
-            }
-
-            // AI 응답
-            setTimeout(() => {
-                if (conversationIndex < conversations.length) {
-                    const response = conversations[conversationIndex].response;
-                    addMessage(getPersonalityStyle(response), "ai-message");
-                    conversationIndex++;
-                } else {
-                    addMessage(getPersonalityStyle("더 이상 준비된 응답이 없습니다. 다음 대화를 준비할게요!"), "ai-message");
-                }
-            }, 500);
-        }
-
-        function levelUp() {
-            level++;
-            experience = 0;
-            updateStatus();
-            addMessage(`${aiName}의 레벨이 ${level}로 올랐습니다! 축하해요!`, "ai-message");
-        }
-
-        function updateStatus() {
-            document.getElementById("level").textContent = level;
-            document.getElementById("experience").textContent = experience;
-        }
-
-        function getPersonalityStyle(response) {
-            switch (personality) {
-                case "kind":
-                    return `😊 [친절하게]: ${response}`;
-                case "humorous":
-                    return `😂 [유머 있게]: ${response}`;
-                case "calm":
-                    return `😌 [차분하게]: ${response}`;
-                case "energetic":
-                    return `⚡ [에너지 넘치게]: ${response}!`;
-                case "philosophical":
-                    return `🧐 [철학적으로]: ${response}. 깊게 생각해봐요!`;
-                default:
-                    return response;
-            }
-        }
-    </script>
+        const data = await response.json();
+        return data.choices[0].message.content.trim();
+    }
+</script>
 </body>
 </html>
